@@ -1,0 +1,45 @@
+{
+    "name": "template-vite-ts",
+    "description": "A Phaser 3 TypeScript template using Vite.",
+    "version": "1.4.0",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/phaserjs/template-vite-ts.git"
+    },
+    "author": "Phaser Studio <support@phaser.io> (https://phaser.io/)",
+    "license": "MIT",
+    "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
+    "bugs": {
+        "url": "https://github.com/phaserjs/template-vite-ts/issues"
+    },
+    "homepage": "https://github.com/phaserjs/template-vite-ts#readme",
+    "scripts": {
+        "dev": "concurrently -k -n \"SERVER,CLIENT\" -c \"blue,magenta\" \"npm run server\" \"npm run client\"",
+        "client": "vite --config vite/config.dev.mjs",
+        "server": "tsx watch src/server/index.ts",
+        "build": "vite build --config vite/config.prod.mjs"
+    },
+    "devDependencies": {
+        "@colyseus/uwebsockets-transport": "^0.16.0",
+        "@types/cors": "^2.8.6",
+        "@types/express": "^4.17.14",
+        "concurrently": "^9.2.1",
+        "tsx": "^4.21.0",
+        "typescript": "~5.7.2",
+        "vite": "^6.3.1"
+    },
+    "dependencies": {
+        "@colyseus/auth": "^0.16.0",
+        "@colyseus/core": "^0.16.0",
+        "@colyseus/monitor": "^0.16.0",
+        "@colyseus/playground": "^0.16.0",
+        "@colyseus/tools": "^0.16.0",
+        "colyseus": "^0.16.0",
+        "colyseus.js": "^0.16.22",
+        "cors": "^2.8.5",
+        "express": "^4.16.4",
+        "phaser": "^3.90.0",
+        "serve-index": "^1.8.0",
+        "terser": "^5.39.0"
+    }
+}
