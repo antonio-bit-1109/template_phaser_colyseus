@@ -1,7 +1,7 @@
 import { Server } from "colyseus";
 import { createServer } from "http";
 import express from "express";
-import { MyRoom } from "./rooms/MyRoom";
+import { PongRoom } from "./rooms/PongRoom.ts";
 
 const port = 2567;
 const app = express();
@@ -12,7 +12,7 @@ const gameServer = new Server({
 });
 
 // Definisci le stanze di gioco
-gameServer.define('my_room', MyRoom);
+gameServer.define('my_room', PongRoom);
 
 // Avvia il server
 void gameServer.listen(port);

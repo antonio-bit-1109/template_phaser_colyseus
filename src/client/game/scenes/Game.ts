@@ -1,33 +1,26 @@
-import { Scene } from 'phaser';
+import {Scene} from 'phaser';
 import * as Colyseus from "colyseus.js"; // <--- IMPORTANTE
 
-export class Game extends Scene
-{
+export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
-    msg_text : Phaser.GameObjects.Text;
 
     client: Colyseus.Client;
+    room: Colyseus.Room;
 
-    constructor ()
-    {
+    constructor() {
         super('Game');
     }
 
-    async create ()
-    {
+    async create() {
         this.camera = this.cameras.main;
-        this.camera.setBackgroundColor(0x00ff00);
 
-        this.background = this.add.image(512, 384, 'background');
-        this.background.setAlpha(0.5);
+        this.background = this.add.image(
+            this.game.config.width as number / 2,
+            this.game.config.height as number / 2,
+            'sfondo');
 
-        this.msg_text = this.add.text(512, 384, 'Connessione al server...', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        });
-        this.msg_text.setOrigin(0.5);
+        this.background.setScale(1.1, 1.3);
 
         // --- LOGICA DI CONNESSIONE ---
         // Istanziamo il client collegandolo a localhost:2567
@@ -38,16 +31,14 @@ export class Game extends Scene
             const room = await this.client.joinOrCreate("my_room");
 
             console.log("Connesso con successo!", room);
-            this.msg_text.setText("Connesso al Server!\nSession ID: " + room.sessionId);
 
         } catch (e) {
             console.error("ERRORE CONNESSIONE:", e);
-            this.msg_text.setText("Errore di connessione :(");
         }
         // -----------------------------
 
-        this.input.once('pointerdown', () => {
-            this.scene.start('GameOver');
-        });
+
+        // --- GESTIONE GIOCATORI ---
+        
     }
 }
