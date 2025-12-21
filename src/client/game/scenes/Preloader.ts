@@ -29,6 +29,9 @@ export class Preloader extends Scene {
         this.load.setPath('assets');
 
         this.load.image("sfondo", "sfondo.png")
+        this.load.image("ball", "pingpongBall.png")
+        this.load.image("player1", "dude_ping_pong.png")
+        this.load.image("player2", "boss_ping_pong.png")
     }
 
     create() {

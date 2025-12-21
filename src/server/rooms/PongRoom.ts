@@ -1,7 +1,14 @@
 import {Room, Client} from "colyseus";
-import {PongState} from "../state/PongState.ts";
-import {PlayerSchema} from "../schema/PlayerSchema.ts";
-import {BallSchema} from "../schema/BallSchema.ts";
+import {PongState} from "../../shared/state/PongState";
+import {PlayerSchema} from "../../shared/schema/PlayerSchema";
+import {BallSchema} from "../../shared/schema/BallSchema";
+import {GameFunctions} from "../functions/GameFunctions";
+
+
+// export interface IEdges {
+//     value: number,
+//     position: "top" | "bottom" | "left" | "right"
+// }
 
 
 // contiene la logica di connessione e le interazioni per una determinata room 'universo di gioco'
@@ -12,16 +19,76 @@ export class PongRoom extends Room<PongState> {
     // hardcodate qui
     private canvasW: number = 1024;
     private canvasH: number = 768;
+    private gameFunctions: GameFunctions;
+    private movingIncrement: number = 4;
+    private directionX: number = Math.floor(Math.random() * 2);
+    private directionY: number = Math.floor(Math.random() * 2);
+    private resetBallPositionX = this.canvasW / 2;
+    private resetBallPositionY = this.canvasH / 2;
+    private counterSimulationInterval = 0;
+
 
     // Configurazione della stanza
     onCreate(options: any) {
         console.log("PongRoom creata!", options);
 
         // instanziamo la pongState
+        this.maxClients = 2;
         this.state = new PongState();
 
         // instanzio direttamente la pallina
-        this.state.ball = new BallSchema(this.canvasH / 2, this.canvasW / 2)
+        this.state.ball = new BallSchema(this.resetBallPositionX, this.resetBallPositionY)
+        this.gameFunctions = new GameFunctions();
+
+        // loop nel quale descrivere gli eventi che vanno accadendo sul server
+        // UN PO IL METODO UPDATE() CHE HA PHASER!
+        // delta time = ogni quanto viene chiamata la funzione (ogni 16ms circa)
+        this.setSimulationInterval(deltaTime => {
+
+            this.counterSimulationInterval += deltaTime;
+
+            this.state.ball.x = this.gameFunctions.ballMove_x(
+                this.state.ball.x,
+                this.directionX === 0 ? this.movingIncrement : -this.movingIncrement
+            );
+
+            this.state.ball.y = this.gameFunctions.ballMove_y(
+                this.state.ball.y,
+                this.directionY === 0 ? -this.movingIncrement : this.movingIncrement
+            );
+
+            if (this.counterSimulationInterval >= 2000) {
+                // resetto counter che registra tempo passato nel setSimulationInterval
+                this.counterSimulationInterval = 0;
+
+                // resetto le variabili che determinano direzione x e y della palla.
+                this.directionX = Math.floor(Math.random() * 2);
+                this.directionY = Math.floor(Math.random() * 2);
+
+                this.gameFunctions.resetBall(
+                    this.state.ball,
+                    this.resetBallPositionX,
+                    this.resetBallPositionY
+                )
+            }
+
+            // if (this.state.ball.x > 800 || this.state.ball.x < 800) {
+            //     this.gameFunctions.resetBall(
+            //         this.state.ball,
+            //         this.resetBallPositionX,
+            //         this.resetBallPositionY
+            //     )
+            // }
+
+            //set bounce logic
+            // this.gameFunctions.ballBounceFunction(
+            //     this.state.ball,
+            //     this.canvasW,
+            //     this.canvasH
+            // )
+
+        }, 16.16)
+
     }
 
     // Quando un giocatore entra

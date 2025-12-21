@@ -1,7 +1,7 @@
 import {Server} from "colyseus";
 import {createServer} from "http";
 import express from "express";
-import {PongRoom} from "./rooms/PongRoom.ts";
+import {PongRoom} from "./rooms/PongRoom";
 
 const port = 2567;
 const app = express();
