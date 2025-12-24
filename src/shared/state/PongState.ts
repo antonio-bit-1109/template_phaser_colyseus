@@ -1,4 +1,4 @@
-import {MapSchema, Schema, type} from "@colyseus/schema";
+import {defineTypes, MapSchema, Schema} from "@colyseus/schema";
 import {BallSchema} from "../schema/BallSchema";
 import {PlayerSchema} from "../schema/PlayerSchema";
 
@@ -7,11 +7,16 @@ import {PlayerSchema} from "../schema/PlayerSchema";
 export class PongState extends Schema {
 
     // generica stringa
-    @type("string") gameState: string = "waiting...";
+    gameState: string = "waiting...";
     // istanza di ball (singola ball)
-    @type(BallSchema) ball = new BallSchema();
+    ball = new BallSchema();
     // istanza di player mappato dentro una mappa (contenitore di piu oggetti player)
-    @type({map: PlayerSchema}) players = new MapSchema<PlayerSchema>();
-
-
+    players = new MapSchema<PlayerSchema>();
+    
 }
+
+defineTypes(PongState, {
+    ball: BallSchema,
+    players: {map: PlayerSchema},
+    gameState: "string"
+});

@@ -4,28 +4,17 @@ import {PlayerSchema} from "../../shared/schema/PlayerSchema";
 import {BallSchema} from "../../shared/schema/BallSchema";
 import {GameFunctions} from "../functions/GameFunctions";
 
-
-// export interface IEdges {
-//     value: number,
-//     position: "top" | "bottom" | "left" | "right"
-// }
-
-
 // contiene la logica di connessione e le interazioni per una determinata room 'universo di gioco'
 // in questo caso qui sarà contenuta tutta la logica di connessione alla stanza che gestisce una partita di pong
 export class PongRoom extends Room<PongState> {
 
     // dimensioni canvas lato client
     // hardcodate qui
-    private canvasW: number = 1024;
-    private canvasH: number = 768;
+    private readonly canvasW: number = 1024;
+    private readonly canvasH: number = 768;
     private gameFunctions: GameFunctions;
-    private movingIncrement: number = 4;
-    private directionX: number = Math.floor(Math.random() * 2);
-    private directionY: number = Math.floor(Math.random() * 2);
-    private resetBallPositionX = this.canvasW / 2;
-    private resetBallPositionY = this.canvasH / 2;
-    private counterSimulationInterval = 0;
+    private readonly resetBallPositionX = this.canvasW / 2;
+    private readonly resetBallPositionY = this.canvasH / 2;
 
 
     // Configurazione della stanza
@@ -45,61 +34,33 @@ export class PongRoom extends Room<PongState> {
         // delta time = ogni quanto viene chiamata la funzione (ogni 16ms circa)
         this.setSimulationInterval(deltaTime => {
 
-            this.counterSimulationInterval += deltaTime;
-
-            this.state.ball.x = this.gameFunctions.ballMove_x(
-                this.state.ball.x,
-                this.directionX === 0 ? this.movingIncrement : -this.movingIncrement
+            this.gameFunctions.ballMove_x(
+                this.state.ball
             );
 
-            this.state.ball.y = this.gameFunctions.ballMove_y(
-                this.state.ball.y,
-                this.directionY === 0 ? -this.movingIncrement : this.movingIncrement
+            this.gameFunctions.ballMove_y(
+                this.state.ball
             );
 
-            if (this.counterSimulationInterval >= 2000) {
-                // resetto counter che registra tempo passato nel setSimulationInterval
-                this.counterSimulationInterval = 0;
+            // set bounce logic
+            this.gameFunctions.ballBounceFunction(this.state.ball, this.canvasW, this.canvasH);
 
-                // resetto le variabili che determinano direzione x e y della palla.
-                this.directionX = Math.floor(Math.random() * 2);
-                this.directionY = Math.floor(Math.random() * 2);
-
-                this.gameFunctions.resetBall(
-                    this.state.ball,
-                    this.resetBallPositionX,
-                    this.resetBallPositionY
-                )
-            }
-
-            // if (this.state.ball.x > 800 || this.state.ball.x < 800) {
-            //     this.gameFunctions.resetBall(
-            //         this.state.ball,
-            //         this.resetBallPositionX,
-            //         this.resetBallPositionY
-            //     )
-            // }
-
-            //set bounce logic
-            // this.gameFunctions.ballBounceFunction(
-            //     this.state.ball,
-            //     this.canvasW,
-            //     this.canvasH
-            // )
 
         }, 16.16)
 
     }
 
     // Quando un giocatore entra
-    onJoin(client: Client, options: any) {
+    onJoin(client: Client, _options: any) {
 
         const size = this.state.players.size;
 
         if (this.state.players.size === 0) {
-            this.state.players.set(client.sessionId, new PlayerSchema(100, this.canvasW / 2));
+            this.state.players.set(client.sessionId, new PlayerSchema(50, this.canvasH / 2));
+            console.log("player 1 " + client.sessionId + " si è loggato.")
         } else {
-            this.state.players.set(client.sessionId, new PlayerSchema(900, this.canvasW / 2));
+            this.state.players.set(client.sessionId, new PlayerSchema(950, this.canvasH / 2));
+            console.log("player 2 " + client.sessionId + " si è loggato.")
         }
 
 
@@ -113,7 +74,7 @@ export class PongRoom extends Room<PongState> {
     }
 
     // Quando un giocatore esce
-    onLeave(client: Client, consented: boolean) {
+    onLeave(client: Client, _consented: boolean) {
         this.state.players.delete(client.sessionId);
         console.log(client.sessionId, "è uscito!");
     }

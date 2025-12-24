@@ -1,11 +1,11 @@
-import {Schema, type} from "@colyseus/schema";
+import {defineTypes, Schema} from "@colyseus/schema";
 
 // schema che definisce l'oggetto giocatore
 
 export class PlayerSchema extends Schema {
 
-    @type("number") y: number;
-    @type("number") x: number;
+    y: number;
+    x: number;
 
     constructor(initialX: number = 100, initialY: number = 350,) {
         super();
@@ -15,3 +15,9 @@ export class PlayerSchema extends Schema {
 
 
 }
+
+// @ts-ignore
+defineTypes(PlayerSchema, {
+    x: "number",
+    y: "number",
+});
