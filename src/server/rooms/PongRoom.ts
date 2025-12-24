@@ -3,6 +3,7 @@ import {PongState} from "../../shared/state/PongState";
 import {PlayerSchema} from "../../shared/schema/PlayerSchema";
 import {BallSchema} from "../../shared/schema/BallSchema";
 import {GameFunctions} from "../functions/GameFunctions";
+import {IMessage} from "../../shared/interface/IMessage.ts";
 
 // contiene la logica di connessione e le interazioni per una determinata room 'universo di gioco'
 // in questo caso qui sarà contenuta tutta la logica di connessione alla stanza che gestisce una partita di pong
@@ -48,6 +49,14 @@ export class PongRoom extends Room<PongState> {
 
         }, 16.16)
 
+
+        // ascoltatore dei messaggi dal client
+        this.onMessage("move", (client, data: IMessage) => {
+            const player = this.state.players.get(client.sessionId);
+            if (player) {
+                player.y += data.direction
+            }
+        })
     }
 
     // Quando un giocatore entra
