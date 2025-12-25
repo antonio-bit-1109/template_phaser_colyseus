@@ -1,7 +1,6 @@
 import {Scene} from 'phaser';
 import * as Colyseus from "colyseus.js";
 import {PongState} from "../../../shared/state/PongState";
-import {PlayerSchema} from "../../../shared/schema/PlayerSchema.ts";
 import Sprite = Phaser.GameObjects.Sprite;
 import {Movementsmanager} from "../util/Movementsmanager.ts";
 import {IMessage} from "../../../shared/interface/IMessage.ts";
@@ -13,9 +12,9 @@ export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     private ball: Phaser.GameObjects.Sprite;
-    private players: Map<string, PlayerSchema> = new Map<string, PlayerSchema>();
-    private player1: Sprite;
-    private player2: Sprite;
+    private players: Map<string, Sprite> = new Map<string, Sprite>();
+    // private player1: Sprite;
+    // private player2: Sprite;
 
     client: Colyseus.Client;
     room: Colyseus.Room;
@@ -73,39 +72,45 @@ export class Game extends Scene {
                 // GESTIONE GIOCATORI
                 pongState.players.forEach((player, sessionId) => {
 
-                    if (!this.players.get(sessionId) && !this.player1) {
-                        this.players.set(sessionId, player);
-                        this.player1 = this.physics.add.sprite(
+
+                    // se non trovo il player1
+                    if (!this.players.get(sessionId)) {
+                        const p = this.physics.add.sprite(
                             player.x,
                             player.y,
-                            "player1"
+                            this.players.size === 0 ? "player1" : "player2",
                         )
                             .setScale(0.3)
-                            .setRotation(Phaser.Math.DegToRad(-90))
+                            .setRotation(Phaser.Math.DegToRad(
+                                this.players.size === 0 ? -90 : 90))
+                        this.players.set(sessionId, p);
+
                     } else {
 
-                        if (this.player1) {
-                            this.player1.setX(player.x)
-                            this.player1.setY(player.y)
-                        }
-                    }
-
-                    if (!this.players.get(sessionId) && !this.player2) {
-                        this.players.set(sessionId, player);
-                        this.player2 = this.physics.add.sprite(
-                            player.x,
-                            player.y,
-                            "player2"
-                        )
-                            .setScale(0.3)
-                            .setRotation(Phaser.Math.DegToRad(90))
-                    } else {
-                        if (this.player2) {
-                            this.player2.setX(player.x)
-                            this.player2.setY(player.y)
+                        const playerSprite = this.players.get(sessionId)
+                        if (playerSprite) {
+                            playerSprite.setX(player.x)
+                            playerSprite.setY(player.y);
                         }
 
                     }
+
+                    // if (!this.players.get(sessionId) && !this.player2) {
+                    //     this.players.set(sessionId, player);
+                    //     this.player2 = this.physics.add.sprite(
+                    //         player.x,
+                    //         player.y,
+                    //         "player2"
+                    //     )
+                    //         .setScale(0.3)
+                    //         .setRotation(Phaser.Math.DegToRad(90))
+                    // } else {
+                    //     if (this.player2) {
+                    //         this.player2.setX(player.x)
+                    //         this.player2.setY(player.y)
+                    //     }
+                    //
+                    // }
 
                 })
             })
