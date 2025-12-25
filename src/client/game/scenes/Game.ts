@@ -94,23 +94,7 @@ export class Game extends Scene {
                         }
 
                     }
-
-                    // if (!this.players.get(sessionId) && !this.player2) {
-                    //     this.players.set(sessionId, player);
-                    //     this.player2 = this.physics.add.sprite(
-                    //         player.x,
-                    //         player.y,
-                    //         "player2"
-                    //     )
-                    //         .setScale(0.3)
-                    //         .setRotation(Phaser.Math.DegToRad(90))
-                    // } else {
-                    //     if (this.player2) {
-                    //         this.player2.setX(player.x)
-                    //         this.player2.setY(player.y)
-                    //     }
-                    //
-                    // }
+                    
 
                 })
             })
