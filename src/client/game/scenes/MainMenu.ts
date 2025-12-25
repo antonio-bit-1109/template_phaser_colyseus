@@ -1,29 +1,46 @@
 import {Scene} from 'phaser';
+import {StyleManager} from "../util/styleManager.ts";
 
 export class MainMenu extends Scene {
-    // background: GameObjects.Image;
-    // logo: GameObjects.Image;
-    // title: GameObjects.Text;
+
+    private styleManager: StyleManager;
 
     constructor() {
         super('MainMenu');
+        this.styleManager = new StyleManager();
     }
 
     create() {
-        // this.background = this.add.image(512, 384, 'background');
-        //
-        // this.logo = this.add.image(512, 300, 'logo');
-        //
-        // this.title = this.add.text(512, 460, 'Main Menu', {
-        //     fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-        //     stroke: '#000000', strokeThickness: 8,
-        //     align: 'center'
-        // }).setOrigin(0.5);
 
-        this.input.once('pointerdown', () => {
+        this.add.text(
+            this.game.config.width as number / 2,
+            this.game.config.height as number / 3,
+            "PONGDUDES",
+            this.styleManager.returnBasicConfigurationStyle(
+                "black",
+                80,
+                10,
+                2,
+                10
+            )
+        ).setOrigin(0.5, 0.5)
 
-            this.scene.start('Game');
+        this.add.text(
+            this.game.config.width as number / 2,
+            this.game.config.height as number / 2,
+            "Start",
+            this.styleManager.returnBasicConfigurationStyle(
+                "black",
+                50,
+                6,
+                2,
+                10
+            )
+        )
+            .setOrigin(0.5, 0.5)
+            .setInteractive({cursor: "pointer"}).once('pointerdown', () => {
+            this.scene.start("game")
+        })
 
-        });
     }
 }

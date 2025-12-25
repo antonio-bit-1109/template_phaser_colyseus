@@ -35,6 +35,9 @@ export class PongRoom extends Room<PongState> {
         // delta time = ogni quanto viene chiamata la funzione (ogni 16ms circa)
         this.setSimulationInterval(deltaTime => {
 
+            // se entrambi i giocatori non sono collegati, la palla non si muove.
+            // if (this.state.players.size < 2) return;
+
             this.gameFunctions.ballMove_x(
                 this.state.ball
             );
@@ -45,7 +48,11 @@ export class PongRoom extends Room<PongState> {
 
             // set bounce logic
             this.gameFunctions.ballBounceFunction(this.state.ball, this.canvasW, this.canvasH);
-
+            this.state.players.forEach(player => {
+                if (player) {
+                    this.gameFunctions.checkCollisionWithPlayer(this.state.ball, player, this.canvasH)
+                }
+            })
 
         }, 16.16)
 
@@ -54,10 +61,20 @@ export class PongRoom extends Room<PongState> {
         this.onMessage("move", (client, data: IMessage) => {
             const player = this.state.players.get(client.sessionId);
             if (player) {
-                player.y += data.direction
+                if (player.y - player.r < 0) {
+                    player.y = player.r + 10
+                    return;
+                }
+
+                if (player.y + player.r > this.canvasH) {
+                    player.y = this.canvasH - player.r - 10
+                    return;
+                }
+                player.y += data.direction;
             }
         })
     }
+
 
     // Quando un giocatore entra
     onJoin(client: Client, _options: any) {

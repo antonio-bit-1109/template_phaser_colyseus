@@ -12,15 +12,13 @@ export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     private ball: Phaser.GameObjects.Sprite;
-    private players: Map<string, Sprite> = new Map<string, Sprite>();
-    // private player1: Sprite;
-    // private player2: Sprite;
+    private readonly players: Map<string, Sprite> = new Map<string, Sprite>();
 
     client: Colyseus.Client;
     room: Colyseus.Room;
 
     constructor() {
-        super('Game');
+        super('game');
     }
 
     async create() {
@@ -73,9 +71,9 @@ export class Game extends Scene {
                 pongState.players.forEach((player, sessionId) => {
 
 
-                    // se non trovo il player1
+                    // se non trovo il player
                     if (!this.players.get(sessionId)) {
-                        const p = this.physics.add.sprite(
+                        const p = this.add.sprite(
                             player.x,
                             player.y,
                             this.players.size === 0 ? "player1" : "player2",
@@ -94,7 +92,7 @@ export class Game extends Scene {
                         }
 
                     }
-                    
+
 
                 })
             })

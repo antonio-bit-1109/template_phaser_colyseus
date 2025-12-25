@@ -6,6 +6,7 @@ export class PlayerSchema extends Schema {
 
     y: number;
     x: number;
+    r: number = 40;
 
     constructor(initialX: number = 100, initialY: number = 350,) {
         super();
@@ -20,4 +21,5 @@ export class PlayerSchema extends Schema {
 defineTypes(PlayerSchema, {
     x: "number",
     y: "number",
+    r: "number"
 });

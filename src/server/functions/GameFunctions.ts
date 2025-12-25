@@ -1,4 +1,5 @@
 import {BallSchema} from "../../shared/schema/BallSchema";
+import {PlayerSchema} from "../../shared/schema/PlayerSchema.ts";
 
 export class GameFunctions {
 
@@ -16,15 +17,15 @@ export class GameFunctions {
 
         // sbatte sn
         if (ball.x - raggioBall <= 0) {
-            // ball.x = raggioBall;
-            // ball.vx *= -1;
-            this.resetBall(ball, canvasW / 2, canvasH / 2, raggioBall, ball.y)
+            ball.x = raggioBall;
+            ball.vx *= -1;
+            // this.resetBall(ball, canvasW / 2, canvasH / 2, raggioBall, ball.y)
 
             // sbatte dx
         } else if (ball.x + raggioBall >= canvasW) {
-            // ball.x = canvasW - raggioBall;
-            // ball.vx *= -1;
-            this.resetBall(ball, canvasW / 2, canvasH / 2, canvasW - raggioBall, ball.y)
+            ball.x = canvasW - raggioBall;
+            ball.vx *= -1;
+            // this.resetBall(ball, canvasW / 2, canvasH / 2, canvasW - raggioBall, ball.y)
 
         }
 
@@ -42,12 +43,39 @@ export class GameFunctions {
 
     }
 
-    public ballMove_x(ball: BallSchema, direction?: number) {
+    public ballMove_x(ball: BallSchema) {
         ball.x += ball.vx;
     }
 
-    public ballMove_y(ball: BallSchema, direction?: number) {
+    public ballMove_y(ball: BallSchema) {
         ball.y += ball.vy;
+    }
+
+    public checkCollisionWithPlayer(ball: BallSchema, player: PlayerSchema, canvasH: number) {
+
+        const raggioPalla = ball.r;
+        const raggioPlayer = player.r;
+        // console.log(player)
+        // caso palla colpisce a dx hitbox del player
+        if (ball.x - raggioPalla <= player.x + raggioPlayer &&
+            this.collisionOnYAxe(ball, player, canvasH)
+        ) {
+            ball.x = player.x + raggioPlayer + 20
+            ball.y = player.y - raggioPlayer
+            ball.vx *= -1
+        }
+
+        // caso palla colpisce sn hitbox del player
+    }
+
+    private collisionOnYAxe(ball: BallSchema, player: PlayerSchema, canvasH: number) {
+        // check collisione con parte superiore del dude
+        if (ball.y + ball.r > player.y - player.r) return true;
+
+        // check collisione con parte inferiore del dude
+        if (ball.y - ball.r < player.y + player.r) return true;
+
+
     }
 
     public resetBall(

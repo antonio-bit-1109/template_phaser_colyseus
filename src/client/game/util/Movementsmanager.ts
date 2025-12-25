@@ -2,15 +2,20 @@ import {Scene} from "phaser";
 
 export class Movementsmanager {
 
-    private cursors;
+    private readonly cursors;
 
 
     constructor(scene: Scene) {
-        this.cursors = scene.input.keyboard.createCursorKeys();
+        this.cursors = scene?.input?.keyboard?.createCursorKeys();
     }
 
 
     public getCursor() {
-        return this.cursors;
+
+        if (this.cursors) {
+            return this.cursors
+        }
+        throw new Error("Il cursore non è definito.")
+
     }
 }
