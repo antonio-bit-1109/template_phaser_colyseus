@@ -17,15 +17,15 @@ export class GameFunctions {
 
         // sbatte sn
         if (ball.x - raggioBall <= 0) {
-            ball.x = raggioBall;
-            ball.vx *= -1;
-            // this.resetBall(ball, canvasW / 2, canvasH / 2, raggioBall, ball.y)
+            // ball.x = raggioBall;
+            // ball.vx *= -1;
+            this.resetBall(ball, canvasW / 2, canvasH / 2, raggioBall, ball.y)
 
             // sbatte dx
         } else if (ball.x + raggioBall >= canvasW) {
-            ball.x = canvasW - raggioBall;
-            ball.vx *= -1;
-            // this.resetBall(ball, canvasW / 2, canvasH / 2, canvasW - raggioBall, ball.y)
+            // ball.x = canvasW - raggioBall;
+            // ball.vx *= -1;
+            this.resetBall(ball, canvasW / 2, canvasH / 2, canvasW - raggioBall, ball.y)
 
         }
 
@@ -51,30 +51,43 @@ export class GameFunctions {
         ball.y += ball.vy;
     }
 
-    public checkCollisionWithPlayer(ball: BallSchema, player: PlayerSchema, canvasH: number) {
+    public checkCollisionWithPlayer(ball: BallSchema, player: PlayerSchema) {
 
         const raggioPalla = ball.r;
         const raggioPlayer = player.r;
-        // console.log(player)
-        // caso palla colpisce a dx hitbox del player
-        if (ball.x - raggioPalla <= player.x + raggioPlayer &&
-            this.collisionOnYAxe(ball, player, canvasH)
-        ) {
-            ball.x = player.x + raggioPlayer + 20
-            ball.y = player.y - raggioPlayer
-            ball.vx *= -1
+
+
+        // logica applicativa sul player a sinistra x = 50
+        if (player.x < 500) {
+            // controllo se la x e la y della palla si trovano "dentro" le coordinate x e y del player 1
+            if (ball.x - raggioPalla <= player.x + raggioPlayer &&
+                this.checkCollisionOnYAxe(ball, player)
+            ) {
+                ball.x = player.x + raggioPlayer + 20
+                ball.vx *= -1
+            }
+
         }
 
-        // caso palla colpisce sn hitbox del player
+        // logica applicativa player a destra x = 950;
+        if (player.x > 500)
+            // se la palla sta viaggiando verso la meta dx del campo
+            // controllo se ce collisione con il player 2
+
+            if (ball.x + raggioPalla >= player.x - raggioPlayer &&
+                this.checkCollisionOnYAxe(ball, player)
+            ) {
+                ball.x = player.x - raggioPlayer - 20
+                ball.vx *= -1
+            }
+
+
     }
 
-    private collisionOnYAxe(ball: BallSchema, player: PlayerSchema, canvasH: number) {
+    private checkCollisionOnYAxe(ball: BallSchema, player: PlayerSchema) {
         // check collisione con parte superiore del dude
-        if (ball.y + ball.r > player.y - player.r) return true;
-
-        // check collisione con parte inferiore del dude
-        if (ball.y - ball.r < player.y + player.r) return true;
-
+        return ball.y + ball.r >= player.y - player.r &&
+            ball.y - ball.r <= player.y + player.r;
 
     }
 

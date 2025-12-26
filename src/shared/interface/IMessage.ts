@@ -1,3 +1,4 @@
 export interface IMessage {
-    direction: number
+    direction?: number,
+    playerName?: string
 }

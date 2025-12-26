@@ -13,6 +13,9 @@ export class Game extends Scene {
     background: Phaser.GameObjects.Image;
     private ball: Phaser.GameObjects.Sprite;
     private readonly players: Map<string, Sprite> = new Map<string, Sprite>();
+    // private readonly namesMap: Map<string, string> = new Map<string, string>();
+    private playerName: string = "";
+
 
     client: Colyseus.Client;
     room: Colyseus.Room;
@@ -21,7 +24,12 @@ export class Game extends Scene {
         super('game');
     }
 
+    init(data: any) {
+        this.playerName = data.name ? data.name : "DEFAULT"
+    }
+
     async create() {
+
         this.camera = this.cameras.main;
 
         this.background = this.add.image(
@@ -42,6 +50,7 @@ export class Game extends Scene {
             this.room = await this.client.joinOrCreate<PongState>("pong");
 
             console.log("Room State Object:", this.room.state);
+
 
             this.movementManager = new Movementsmanager(this)
 
@@ -80,8 +89,19 @@ export class Game extends Scene {
                         )
                             .setScale(0.3)
                             .setRotation(Phaser.Math.DegToRad(
-                                this.players.size === 0 ? -90 : 90))
+                                this.players.size === 0 ? -90 : 90)
+                            )
                         this.players.set(sessionId, p);
+
+                        // se il giocatore nonha ancora un nome glielo fornisco da quello inserito nel client precedentemente
+                        // inviandolo al server
+                        if (player.playerName === "") {
+                            const message: IMessage = {
+                                playerName: this.playerName
+                            }
+                            this.room.send("set_name", message)
+
+                        }
 
                     } else {
 
@@ -108,10 +128,9 @@ export class Game extends Scene {
 
 
     update(time: number, delta: number) {
+        super.update(time, delta);
 
         if (!this.room) return;
-
-        super.update(time, delta);
 
         const message: IMessage = {
             direction: 0
