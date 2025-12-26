@@ -4,6 +4,7 @@ import {PongState} from "../../../shared/state/PongState";
 import Sprite = Phaser.GameObjects.Sprite;
 import {Movementsmanager} from "../util/Movementsmanager.ts";
 import {IMessage} from "../../../shared/interface/IMessage.ts";
+import Text = Phaser.GameObjects.Text;
 
 export class Game extends Scene {
 
@@ -13,9 +14,10 @@ export class Game extends Scene {
     background: Phaser.GameObjects.Image;
     private ball: Phaser.GameObjects.Sprite;
     private readonly players: Map<string, Sprite> = new Map<string, Sprite>();
-    // private readonly namesMap: Map<string, string> = new Map<string, string>();
     private playerName: string = "";
-
+    private tag1: Text | null = null;
+    private tag2: Text | null = null;
+    private namesMap: Map<string, string> = new Map<string, string>()
 
     client: Colyseus.Client;
     room: Colyseus.Room;
@@ -105,16 +107,53 @@ export class Game extends Scene {
 
                     } else {
 
+                        if (player.playerName) {
+                            this.namesMap.set(sessionId, player.playerName)
+                        }
+
                         const playerSprite = this.players.get(sessionId)
                         if (playerSprite) {
                             playerSprite.setX(player.x)
                             playerSprite.setY(player.y);
+
                         }
 
+                        this.namesMap.forEach((_) => {
+                            if (!this.tag1) {
+                                this.tag1 = this.add.text(
+                                    player.x + 30,
+                                    player.y - 30,
+                                    player.playerName
+                                )
+                            }
+
+                            if (this.tag1) {
+                                this.tag2 = this.add.text(
+                                    player.x + 30,
+                                    player.y - 30,
+                                    player.playerName
+                                )
+                            }
+
+
+                        })
+
+                        if (this.tag1) {
+                            this.tag1
+                                .setX(player.x + 30)
+                                .setY(player.y - 30)
+                        }
+
+                        if (this.tag2) {
+                            this.tag2
+                                .setX(player.x + 30)
+                                .setY(player.y - 30)
+                        }
                     }
 
 
                 })
+
             })
 
 
