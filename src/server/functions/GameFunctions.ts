@@ -87,7 +87,7 @@ export class GameFunctions {
     private checkCollisionOnYAxe(ball: BallSchema, player: PlayerSchema) {
         // check collisione con parte superiore del dude
         return ball.y + ball.r >= player.y - player.r &&
-            ball.y - ball.r <= player.y + player.r;
+            ball.y - ball.r <= player.y + player.r
 
     }
 

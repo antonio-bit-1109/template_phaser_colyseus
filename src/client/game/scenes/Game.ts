@@ -15,9 +15,8 @@ export class Game extends Scene {
     private ball: Phaser.GameObjects.Sprite;
     private readonly players: Map<string, Sprite> = new Map<string, Sprite>();
     private playerName: string = "";
-    private tag1: Text | null = null;
-    private tag2: Text | null = null;
-    private namesMap: Map<string, string> = new Map<string, string>()
+    private readonly namesMap: Map<string, Text> = new Map<string, Text>();
+    private messageFromServer: Text;
 
     client: Colyseus.Client;
     room: Colyseus.Room;
@@ -58,6 +57,19 @@ export class Game extends Scene {
 
             // ogni volta che lo stato cambia:
             this.room.onStateChange((pongState: PongState) => {
+
+                if (!this.messageFromServer) {
+                    this.messageFromServer = this.add.text(
+                        this.game.config.width as number / 2,
+                        this.game.config.height as number / 10,
+                        pongState.gameState,
+                        {
+                            fontSize: 50
+                        }
+                    ).setOrigin(0.5, 0.5)
+                } else {
+                    this.messageFromServer.text = pongState.gameState;
+                }
 
 
                 // GESTIONE PALLA
@@ -107,8 +119,19 @@ export class Game extends Scene {
 
                     } else {
 
-                        if (player.playerName) {
-                            this.namesMap.set(sessionId, player.playerName)
+                        // se la mappa dei nomi nonha ancora un key-value con il session id dell utente
+                        // creo un set k-v con sessionId - Text
+                        if (!this.namesMap.get(sessionId)) {
+                            const nameTag = this.add.text(
+                                player.x - 15,
+                                player.y - 70,
+                                player.playerName,
+                                {
+                                    color: player.colorName,
+                                    strokeThickness: 4
+                                }
+                            )
+                            this.namesMap.set(sessionId, nameTag);
                         }
 
                         const playerSprite = this.players.get(sessionId)
@@ -118,40 +141,28 @@ export class Game extends Scene {
 
                         }
 
-                        this.namesMap.forEach((_) => {
-                            if (!this.tag1) {
-                                this.tag1 = this.add.text(
-                                    player.x + 30,
-                                    player.y - 30,
-                                    player.playerName
-                                )
+                        // se dal server mi torna il nome dle player
+                        // prendo la mappa k-v dei nomi e aggiorno la posizione
+                        if (player.playerName) {
+                            const tagText = this.namesMap.get(sessionId)
+                            if (tagText) {
+                                tagText.setX(player.x - 15)
+                                tagText.setY(player.y - 70)
                             }
-
-                            if (this.tag1) {
-                                this.tag2 = this.add.text(
-                                    player.x + 30,
-                                    player.y - 30,
-                                    player.playerName
-                                )
-                            }
-
-
-                        })
-
-                        if (this.tag1) {
-                            this.tag1
-                                .setX(player.x + 30)
-                                .setY(player.y - 30)
-                        }
-
-                        if (this.tag2) {
-                            this.tag2
-                                .setX(player.x + 30)
-                                .setY(player.y - 30)
                         }
                     }
 
+                })
 
+                // gestione logica player cancellati dal server
+                // se sul server un player non c'è più (identificato dalla session id)
+                // lo cancello dal client, insieme al suo tag nome.
+                Array.from(this.players.keys()).forEach((sessionId) => {
+                    if (!this.room.state.players.has(sessionId)) {
+
+                        this.players.get(sessionId)?.destroy(true);
+                        this.namesMap.get(sessionId)?.destroy(true);
+                    }
                 })
 
             })

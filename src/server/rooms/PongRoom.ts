@@ -4,6 +4,8 @@ import {PlayerSchema} from "../../shared/schema/PlayerSchema";
 import {BallSchema} from "../../shared/schema/BallSchema";
 import {GameFunctions} from "../functions/GameFunctions";
 import {IMessage} from "../../shared/interface/IMessage.ts";
+import {StyleManager} from "../../client/game/util/styleManager.ts";
+import {Movementsmanager} from "../../client/game/util/Movementsmanager.ts";
 
 // contiene la logica di connessione e le interazioni per una determinata room 'universo di gioco'
 // in questo caso qui sarà contenuta tutta la logica di connessione alla stanza che gestisce una partita di pong
@@ -16,7 +18,8 @@ export class PongRoom extends Room<PongState> {
     private gameFunctions: GameFunctions;
     private readonly resetBallPositionX = this.canvasW / 2;
     private readonly resetBallPositionY = this.canvasH / 2;
-
+    private readonly styleManager: StyleManager = new StyleManager();
+    private readonly movementmanager: Movementsmanager = new Movementsmanager();
 
     // Configurazione della stanza
     onCreate(options: any) {
@@ -70,16 +73,18 @@ export class PongRoom extends Room<PongState> {
                     player.y = this.canvasH - player.r - 10
                     return;
                 }
-                player.y += data.direction ? data.direction : 0;
+                player.y += data.direction ? this.movementmanager.addAccelerationToPlayerMovement(data.direction) : 0;
             }
         })
 
         this.onMessage("set_name", (client, message: IMessage) => {
             const playerServer = this.state.players.get(client.sessionId)
             if (playerServer) {
-                playerServer.playerName = message.playerName ? message.playerName : "DEFAULT"
+                playerServer.playerName = message.playerName ? message.playerName : "DEFAULT";
+                playerServer.colorName = this.styleManager.getRandomColor();
             }
         })
+
     }
 
 
@@ -92,18 +97,19 @@ export class PongRoom extends Room<PongState> {
             this.state.players.set(client.sessionId, new PlayerSchema(50, this.canvasH / 2));
             console.log("player 1 " + client.sessionId + " si è loggato.")
         } else {
-            this.state.players.set(client.sessionId, new PlayerSchema(950, this.canvasH / 2));
+            this.state.players.set(client.sessionId, new PlayerSchema(960, this.canvasH / 2));
             console.log("player 2 " + client.sessionId + " si è loggato.")
         }
 
+        if (this.state.players.size === 1) {
+            this.state.gameState = "Attesa secondo giocatore..."
+        }
+
+        if (this.state.players.size === 2) {
+            this.state.gameState = "";
+        }
 
         console.log(client.sessionId, "giocatore" + size + " si è unito: " + client.sessionId);
-
-        if (size === 2) {
-            this.state.gameState = "Pronti a giocare!"
-        } else {
-            this.state.gameState = "Attesa giocatore 2 ..."
-        }
     }
 
     // Quando un giocatore esce

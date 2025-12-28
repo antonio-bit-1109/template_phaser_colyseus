@@ -2,6 +2,22 @@ import TextStyle = Phaser.Types.GameObjects.Text.TextStyle;
 
 export class StyleManager {
 
+    private readonly colors = [
+        "red",
+        "blue",
+        "yellow",
+        "purple",
+        "black",
+        "green",
+        "grey",
+        "orange"
+    ]
+
+    public getRandomColor() {
+        const n = Math.floor(Math.random() * this.colors.length)
+        return this.colors[n]
+    }
+
 
     public returnBasicConfigurationStyle(
         color?: string,
@@ -16,6 +32,6 @@ export class StyleManager {
             strokeThickness: strokeThickness ? strokeThickness : 5,
             letterSpacing: letterSpacing ? letterSpacing : 2,
             stroke: stroke ? stroke : 10
-        } as TextStyle
+        } as unknown as TextStyle
     }
 }

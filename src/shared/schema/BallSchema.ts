@@ -3,8 +3,8 @@ import {Schema, defineTypes} from "@colyseus/schema";
 export class BallSchema extends Schema {
     x: number = 400;
     y: number = 300;
-    vx: number = 4;
-    vy: number = 4;
+    vx: number = 12;
+    vy: number = 12;
     r: number = 22;
 
     constructor(ballX: number = 500, ballY: number = 500, vx: number = 4, vy: number = 4) {
