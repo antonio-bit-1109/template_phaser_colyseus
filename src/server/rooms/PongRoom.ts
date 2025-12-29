@@ -31,7 +31,7 @@ export class PongRoom extends Room<PongState> {
 
         // instanzio direttamente la pallina
         this.state.ball = new BallSchema(this.resetBallPositionX, this.resetBallPositionY)
-        this.gameFunctions = new GameFunctions();
+        this.gameFunctions = new GameFunctions(this.state);
 
         // loop nel quale descrivere gli eventi che vanno accadendo sul server
         // UN PO IL METODO UPDATE() CHE HA PHASER!
@@ -94,10 +94,10 @@ export class PongRoom extends Room<PongState> {
         const size = this.state.players.size;
 
         if (this.state.players.size === 0) {
-            this.state.players.set(client.sessionId, new PlayerSchema(50, this.canvasH / 2));
+            this.state.players.set(client.sessionId, new PlayerSchema(1, 50, this.canvasH / 2));
             console.log("player 1 " + client.sessionId + " si è loggato.")
         } else {
-            this.state.players.set(client.sessionId, new PlayerSchema(960, this.canvasH / 2));
+            this.state.players.set(client.sessionId, new PlayerSchema(2, 960, this.canvasH / 2));
             console.log("player 2 " + client.sessionId + " si è loggato.")
         }
 

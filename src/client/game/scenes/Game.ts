@@ -5,11 +5,12 @@ import Sprite = Phaser.GameObjects.Sprite;
 import {Movementsmanager} from "../util/Movementsmanager.ts";
 import {IMessage} from "../../../shared/interface/IMessage.ts";
 import Text = Phaser.GameObjects.Text;
+import {StyleManager} from "../util/styleManager.ts";
 
 export class Game extends Scene {
 
     private movementManager: Movementsmanager;
-
+    private styleManager: StyleManager;
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     private ball: Phaser.GameObjects.Sprite;
@@ -17,6 +18,7 @@ export class Game extends Scene {
     private playerName: string = "";
     private readonly namesMap: Map<string, Text> = new Map<string, Text>();
     private messageFromServer: Text;
+    private pointsMap: Map<string, Text> = new Map<string, Text>();
 
     client: Colyseus.Client;
     room: Colyseus.Room;
@@ -54,14 +56,15 @@ export class Game extends Scene {
 
 
             this.movementManager = new Movementsmanager(this)
-
+            this.styleManager = new StyleManager()
             // ogni volta che lo stato cambia:
             this.room.onStateChange((pongState: PongState) => {
+
 
                 if (!this.messageFromServer) {
                     this.messageFromServer = this.add.text(
                         this.game.config.width as number / 2,
-                        this.game.config.height as number / 10,
+                        this.game.config.height as number / 4.5,
                         pongState.gameState,
                         {
                             fontSize: 50
@@ -93,6 +96,25 @@ export class Game extends Scene {
                 // GESTIONE GIOCATORI
                 pongState.players.forEach((player, sessionId) => {
 
+                    // se nella mappa dei punteggi non è presente id sessione dell utente,
+                    // popolo la mappa
+
+                    if (!this.pointsMap.get(sessionId)) {
+                        const points = this.add.text(
+                            this.styleManager.setDisplayPoints(player.index, this.game.config.width as number),
+                            this.game.config.height as number / 25,
+                            player.playerPoints.toString(),
+                            {
+                                fontSize: 120
+                            }
+                        )
+                        this.pointsMap.set(sessionId, points)
+                    } else {
+                        const pointsRef = this.pointsMap.get(sessionId);
+                        if (pointsRef) {
+                            pointsRef.setText(player.playerPoints.toString())
+                        }
+                    }
 
                     // se non trovo il player
                     if (!this.players.get(sessionId)) {

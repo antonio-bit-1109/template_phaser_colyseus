@@ -10,11 +10,13 @@ export class PlayerSchema extends Schema {
     playerName = "";
     playerPoints = 0;
     colorName = "";
+    index = 999;
 
-    constructor(initialX: number = 100, initialY: number = 350,) {
+    constructor(index: number, initialX: number = 100, initialY: number = 350) {
         super();
         this.y = initialY;
         this.x = initialX;
+        this.index = index;
     }
 
 
@@ -27,5 +29,6 @@ defineTypes(PlayerSchema, {
     r: "number",
     playerName: "string",
     playerPoints: "number",
-    colorName: "string"
+    colorName: "string",
+    index: "number"
 });

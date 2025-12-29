@@ -34,4 +34,8 @@ export class StyleManager {
             stroke: stroke ? stroke : 10
         } as unknown as TextStyle
     }
+
+    public setDisplayPoints(playerIndex: number, canvasW: number) {
+        return playerIndex === 1 ? canvasW / 3 : canvasW / 1.7
+    }
 }

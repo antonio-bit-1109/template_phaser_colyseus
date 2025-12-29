@@ -1,12 +1,16 @@
 import {BallSchema} from "../../shared/schema/BallSchema";
 import {PlayerSchema} from "../../shared/schema/PlayerSchema.ts";
+import {PongState} from "../../shared/state/PongState.ts";
 
 export class GameFunctions {
 
     private timeoutRef: NodeJS.Timeout | null = null;
+    private state: PongState;
 
-    // constructor() {
-    // }
+    constructor(state: PongState) {
+        this.state = state;
+    }
+
 
     public ballBounceFunction(ball: BallSchema, canvasW: number, canvasH: number) {
 
@@ -20,13 +24,26 @@ export class GameFunctions {
             // ball.x = raggioBall;
             // ball.vx *= -1;
             this.resetBall(ball, canvasW / 2, canvasH / 2, raggioBall, ball.y)
+            // quando la palla sbatte sul muro di sinistra,
+            // assegno +1 al giocatore opposto, quello con index = 2
+            this.state.players.forEach(player => {
+                if (player.index === 2) {
+                    player.playerPoints += 1
+                }
+            })
 
             // sbatte dx
         } else if (ball.x + raggioBall >= canvasW) {
             // ball.x = canvasW - raggioBall;
             // ball.vx *= -1;
             this.resetBall(ball, canvasW / 2, canvasH / 2, canvasW - raggioBall, ball.y)
-
+            // quando la palla sbatte sul muro di destra, do punto al giocatore opposto, il primo giocatore creato,
+            // cioè quello con index = 1
+            this.state.players.forEach(player => {
+                if (player.index === 1) {
+                    player.playerPoints += 1
+                }
+            })
         }
 
 
