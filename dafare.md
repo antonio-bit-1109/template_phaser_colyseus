@@ -4,4 +4,9 @@
 - aumento hitbox del player, a tempo (bonus)
 - diminuzione velocità spostamento player (malus)
   )
-- [] incrementa e mostra punteggio del player quando fa punto
+- [x] incrementa e mostra punteggio del player quando fa punto
+
+r = 45 se scalo lo sprite da 0.3 a 0.5
+
+setscale = 0.3 --- r= 30;
+setscale = 0.5 --- r = 45;

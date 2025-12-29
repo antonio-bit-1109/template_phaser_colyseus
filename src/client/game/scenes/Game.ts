@@ -97,8 +97,7 @@ export class Game extends Scene {
                 pongState.players.forEach((player, sessionId) => {
 
                     // se nella mappa dei punteggi non è presente id sessione dell utente,
-                    // popolo la mappa
-
+                    // popolo la mappa con un text riportante il punteggio del giocaotre
                     if (!this.pointsMap.get(sessionId)) {
                         const points = this.add.text(
                             this.styleManager.setDisplayPoints(player.index, this.game.config.width as number),
@@ -160,7 +159,6 @@ export class Game extends Scene {
                         if (playerSprite) {
                             playerSprite.setX(player.x)
                             playerSprite.setY(player.y);
-
                         }
 
                         // se dal server mi torna il nome dle player
