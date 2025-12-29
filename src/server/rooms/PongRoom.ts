@@ -6,6 +6,8 @@ import {GameFunctions} from "../functions/GameFunctions";
 import {IMessage} from "../../shared/interface/IMessage.ts";
 import {StyleManager} from "../../client/game/util/styleManager.ts";
 import {Movementsmanager} from "../../client/game/util/Movementsmanager.ts";
+import {BonusSchema} from "../../shared/schema/BonusSchema.ts";
+import {IBonusTypes} from "../../shared/interface/IBonusTypes.ts";
 
 // contiene la logica di connessione e le interazioni per una determinata room 'universo di gioco'
 // in questo caso qui sarà contenuta tutta la logica di connessione alla stanza che gestisce una partita di pong
@@ -20,6 +22,8 @@ export class PongRoom extends Room<PongState> {
     private readonly resetBallPositionY = this.canvasH / 2;
     private readonly styleManager: StyleManager = new StyleManager();
     private readonly movementmanager: Movementsmanager = new Movementsmanager();
+    private counterDeltaTime: number = 0;
+
 
     // Configurazione della stanza
     onCreate(options: any) {
@@ -38,19 +42,53 @@ export class PongRoom extends Room<PongState> {
         // delta time = ogni quanto viene chiamata la funzione (ogni 16ms circa)
         this.setSimulationInterval(deltaTime => {
 
+            this.counterDeltaTime += deltaTime;
             // se entrambi i giocatori non sono collegati, la palla non si muove.
             if (this.state.players.size < 2) return;
 
-            this.gameFunctions.ballMove_x(
+            //EVENTI BONUS
+            // se determinate condizioni rispettare generare un evento che spawna una moneta che se presa fa il growup del player
+            // ogni 20 secondi spawna un bonus
+            // il tipo è deciso random
+            if (this.counterDeltaTime >= 10000) {
+                this.counterDeltaTime = 0;
+                const n = Math.random();
+
+                this.state.bonus = new BonusSchema(this.resetBallPositionX, this.resetBallPositionY);
+                const growUpType: IBonusTypes = {
+                    type: "growUp"
+                }
+
+                // evento bonus growUp
+                // if (n === 0 || n < 0.3) {
+                if (n) {
+                    this.state.bonus.type = growUpType.type // bonus di tipo growUp
+                    this.state.bonus.active = true;
+                    console.log("generazione nuovo bonus!")
+                }
+            }
+
+            // movimento e rimbalzo del bonus
+            this.gameFunctions.objectMove_x(
+                this.state.bonus
+            )
+
+            this.gameFunctions.objectMove_y(
+                this.state.bonus
+            )
+
+            this.gameFunctions.objectBounceFunction(this.state.bonus, this.canvasW, this.canvasH, -1.5, false)
+
+            // movimento e rimbalzo della palla
+            this.gameFunctions.objectMove_x(
                 this.state.ball
             );
-
-            this.gameFunctions.ballMove_y(
+            this.gameFunctions.objectMove_y(
                 this.state.ball
             );
 
             // set bounce logic
-            this.gameFunctions.ballBounceFunction(this.state.ball, this.canvasW, this.canvasH);
+            this.gameFunctions.objectBounceFunction(this.state.ball, this.canvasW, this.canvasH, -1, true);
             this.state.players.forEach(player => {
                 if (player) {
                     this.gameFunctions.checkCollisionWithPlayer(this.state.ball, player)

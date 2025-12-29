@@ -18,7 +18,7 @@ export class Game extends Scene {
     private playerName: string = "";
     private readonly namesMap: Map<string, Text> = new Map<string, Text>();
     private messageFromServer: Text;
-    private pointsMap: Map<string, Text> = new Map<string, Text>();
+    private readonly pointsMap: Map<string, Text> = new Map<string, Text>();
 
     client: Colyseus.Client;
     room: Colyseus.Room;
@@ -60,6 +60,11 @@ export class Game extends Scene {
             // ogni volta che lo stato cambia:
             this.room.onStateChange((pongState: PongState) => {
 
+
+                // controllo lo stato del bonus
+                if (pongState.bonus && pongState.bonus.active) {
+
+                }
 
                 if (!this.messageFromServer) {
                     this.messageFromServer = this.add.text(

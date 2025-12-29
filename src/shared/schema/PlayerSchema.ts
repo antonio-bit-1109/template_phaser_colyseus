@@ -11,6 +11,7 @@ export class PlayerSchema extends Schema {
     playerPoints = 0;
     colorName = "";
     index = 999;
+    isGrowUp = false
 
     constructor(index: number, initialX: number = 100, initialY: number = 350) {
         super();

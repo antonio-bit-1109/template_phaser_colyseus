@@ -1,71 +1,109 @@
 import {BallSchema} from "../../shared/schema/BallSchema";
 import {PlayerSchema} from "../../shared/schema/PlayerSchema.ts";
 import {PongState} from "../../shared/state/PongState.ts";
+import {Schema} from "@colyseus/schema";
+import {BonusSchema} from "../../shared/schema/BonusSchema.ts";
+
 
 export class GameFunctions {
 
     private timeoutRef: NodeJS.Timeout | null = null;
-    private state: PongState;
+    private readonly state: PongState;
 
     constructor(state: PongState) {
         this.state = state;
     }
 
 
-    public ballBounceFunction(ball: BallSchema, canvasW: number, canvasH: number) {
+    public objectBounceFunction(
+        ball: Schema<any>,
+        canvasW: number,
+        canvasH: number,
+        deltaRimbalzo: number,
+        isBall: boolean
+    ) {
 
-        let raggioBall = ball.r;
+        let object: BallSchema | BonusSchema;
+
+        if (ball instanceof BallSchema) {
+            object = ball as BallSchema
+        } else {
+            object = ball as BonusSchema
+        }
+
+        let raggioBall = object.r;
 
         // se la palla è ferma esci
-        if (ball.vx === 0 && ball.vy === 0) return;
+        if (object.vx === 0 && object.vy === 0) return;
 
         // sbatte sn
-        if (ball.x - raggioBall <= 0) {
-            // ball.x = raggioBall;
-            // ball.vx *= -1;
-            this.resetBall(ball, canvasW / 2, canvasH / 2, raggioBall, ball.y)
-            // quando la palla sbatte sul muro di sinistra,
-            // assegno +1 al giocatore opposto, quello con index = 2
-            this.state.players.forEach(player => {
-                if (player.index === 2) {
-                    player.playerPoints += 1
-                }
-            })
+        if (object.x - raggioBall <= 0) {
+
+
+            // se oggetto che rimbalza è la palla applico logica della palla
+            // resetto la palla quando tocca uno dei muri di punto
+            // aumento punteggio giocatore avversario
+            if (isBall) {
+                this.resetBall(object, canvasW / 2, canvasH / 2, raggioBall, object.y)
+                // quando la palla sbatte sul muro di sinistra,
+                // assegno +1 al giocatore opposto, quello con index = 2
+                this.state.players.forEach(player => {
+                    if (player.index === 2) {
+                        player.playerPoints += 1
+                    }
+                })
+            } else {
+
+                // se l'oggetto non è una palla continua a rimbalzare
+                object.x = raggioBall;
+                object.vx *= deltaRimbalzo;
+            }
+
 
             // sbatte dx
-        } else if (ball.x + raggioBall >= canvasW) {
-            // ball.x = canvasW - raggioBall;
-            // ball.vx *= -1;
-            this.resetBall(ball, canvasW / 2, canvasH / 2, canvasW - raggioBall, ball.y)
-            // quando la palla sbatte sul muro di destra, do punto al giocatore opposto, il primo giocatore creato,
-            // cioè quello con index = 1
-            this.state.players.forEach(player => {
-                if (player.index === 1) {
-                    player.playerPoints += 1
-                }
-            })
+        } else if (object.x + raggioBall >= canvasW) {
+
+            if (isBall) {
+                this.resetBall(object, canvasW / 2, canvasH / 2, canvasW - raggioBall, object.y)
+                // quando la palla sbatte sul muro di destra, do punto al giocatore opposto, il primo giocatore creato,
+                // cioè quello con index = 1
+                this.state.players.forEach(player => {
+                    if (player.index === 1) {
+                        player.playerPoints += 1
+                    }
+                })
+            } else {
+                object.x = canvasW - raggioBall;
+                object.vx *= deltaRimbalzo;
+            }
+
         }
 
 
         // sbatte sopra
-        if (ball.y - raggioBall <= 0) {
-            ball.y = raggioBall;
-            ball.vy *= -1;
+        if (object.y - raggioBall <= 0) {
+            object.y = raggioBall;
+            object.vy *= deltaRimbalzo;
 
             // sbatte sotto
-        } else if (ball.y + raggioBall >= canvasH) {
-            ball.y = canvasH - raggioBall;
-            ball.vy *= -1
+        } else if (object.y + raggioBall >= canvasH) {
+            object.y = canvasH - raggioBall;
+            object.vy *= deltaRimbalzo
         }
 
     }
 
-    public ballMove_x(ball: BallSchema) {
-        ball.x += ball.vx;
+    public objectMove_x(ball: Schema<any>) {
+        if (ball instanceof BallSchema || ball instanceof BonusSchema) {
+            ball.x += ball.vx;
+        }
     }
 
-    public ballMove_y(ball: BallSchema) {
-        ball.y += ball.vy;
+    public objectMove_y(ball: Schema) {
+        if (ball instanceof BallSchema || ball instanceof BonusSchema) {
+            ball.y += ball.vy;
+        }
+
     }
 
     public checkCollisionWithPlayer(ball: BallSchema, player: PlayerSchema) {
