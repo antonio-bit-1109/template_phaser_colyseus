@@ -1,10 +1,10 @@
 import {Scene} from 'phaser';
-import {StyleManager} from "../util/styleManager.ts";
 import DOMElement = Phaser.GameObjects.DOMElement;
+import {UtilsClient} from "../util/UtilsClient.ts";
 
 export class MainMenu extends Scene {
 
-    private readonly styleManager: StyleManager;
+    private utilsClient: UtilsClient
     private name: string | null = null;
     private inputDom: DOMElement | null = null;
     private errorMsg: Phaser.GameObjects.Text;
@@ -13,12 +13,10 @@ export class MainMenu extends Scene {
 
     constructor() {
         super('MainMenu');
-        this.styleManager = new StyleManager();
-
     }
 
     create() {
-
+        this.utilsClient = new UtilsClient(this);
         this.canvasW = this.game.config.width as number;
         this.canvasH = this.game.config.height as number;
 
@@ -26,7 +24,7 @@ export class MainMenu extends Scene {
             this.canvasW / 2,
             this.canvasH / 3,
             "PONGDUDES",
-            this.styleManager.returnBasicConfigurationStyle(
+            this.utilsClient.returnBasicConfigurationStyle(
                 "black",
                 80,
                 10,
@@ -39,7 +37,7 @@ export class MainMenu extends Scene {
             this.canvasW / 2,
             this.canvasH / 2,
             "Start",
-            this.styleManager.returnBasicConfigurationStyle(
+            this.utilsClient.returnBasicConfigurationStyle(
                 "black",
                 50,
                 6,

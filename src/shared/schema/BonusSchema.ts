@@ -9,6 +9,7 @@ export class BonusSchema extends Schema {
     r: number = 20;
     vx: number = 12;
     vy: number = 12;
+    hitbox_x = 0;
     active: boolean = false;
     type: string = "";
 
@@ -29,5 +30,6 @@ defineTypes(BonusSchema, {
     active: "boolean",
     type: "string",
     vx: "number",
-    vy: "number"
+    vy: "number",
+    hitbox_x: "number"
 });

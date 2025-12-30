@@ -2,15 +2,13 @@ import {Scene} from 'phaser';
 import * as Colyseus from "colyseus.js";
 import {PongState} from "../../../shared/state/PongState";
 import Sprite = Phaser.GameObjects.Sprite;
-import {Movementsmanager} from "../util/Movementsmanager.ts";
 import {IMessage} from "../../../shared/interface/IMessage.ts";
 import Text = Phaser.GameObjects.Text;
-import {StyleManager} from "../util/styleManager.ts";
+import {UtilsClient} from "../util/UtilsClient.ts";
 
 export class Game extends Scene {
 
-    private movementManager: Movementsmanager;
-    private styleManager: StyleManager;
+    private utilsClient: UtilsClient;
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     private ball: Phaser.GameObjects.Sprite;
@@ -55,9 +53,7 @@ export class Game extends Scene {
 
             console.log("Room State Object:", this.room.state);
 
-
-            this.movementManager = new Movementsmanager(this)
-            this.styleManager = new StyleManager()
+            this.utilsClient = new UtilsClient(this)
             // ogni volta che lo stato cambia:
             this.room.onStateChange((pongState: PongState) => {
 
@@ -83,6 +79,7 @@ export class Game extends Scene {
                         this.bonus.setY(pongState.bonus.y)
                     }
                 }
+
 
                 if (!this.messageFromServer) {
                     this.messageFromServer = this.add.text(
@@ -119,11 +116,12 @@ export class Game extends Scene {
                 // GESTIONE GIOCATORI
                 pongState.players.forEach((player, sessionId) => {
 
+
                     // se nella mappa dei punteggi non è presente id sessione dell utente,
                     // popolo la mappa con un text riportante il punteggio del giocaotre
                     if (!this.pointsMap.get(sessionId)) {
                         const points = this.add.text(
-                            this.styleManager.setDisplayPoints(player.index, this.game.config.width as number),
+                            this.utilsClient.setDisplayPoints(player.index, this.game.config.width as number),
                             this.game.config.height as number / 25,
                             player.playerPoints.toString(),
                             {
@@ -137,6 +135,21 @@ export class Game extends Scene {
                             pointsRef.setText(player.playerPoints.toString())
                         }
                     }
+
+                    // se lo stato del bonus è riportato inattivo, significa che ha colpito un player,
+                    // lo distruggo dalla scena e applico il bonus allo sprite del giocatore
+                    // perche ancora è presente l informazione sul tipo di bonus
+                    if (pongState.bonus && !pongState.bonus.active) {
+                        this.bonusNotified = false;
+                        this.bonus?.destroy(true);
+
+                        const playerSprite = this.players.get(sessionId)
+                        if (playerSprite) {
+                            this.utilsClient.checkBonusAndModifySprite(pongState.bonus, playerSprite, this.room, player)
+                        }
+
+                    }
+
 
                     // se non trovo il player
                     if (!this.players.get(sessionId)) {
@@ -182,6 +195,9 @@ export class Game extends Scene {
                         if (playerSprite) {
                             playerSprite.setX(player.x)
                             playerSprite.setY(player.y);
+                            playerSprite.setScale(
+                                player.r === 45 ? 0.5 : 0.3
+                            )
                         }
 
                         // se dal server mi torna il nome dle player
@@ -229,12 +245,12 @@ export class Game extends Scene {
             direction: 0
         }
 
-        if (this.movementManager.getCursor().up.isDown) {
+        if (this.utilsClient.getCursor().up.isDown) {
             message.direction = -4;
             this.room.send("move", message)
         }
 
-        if (this.movementManager.getCursor().down.isDown) {
+        if (this.utilsClient.getCursor().down.isDown) {
             message.direction = +4;
             this.room.send("move", message)
         }

@@ -1,19 +1,39 @@
-import {BallSchema} from "../../shared/schema/BallSchema";
+import {BallSchema} from "../../shared/schema/BallSchema.ts";
 import {PlayerSchema} from "../../shared/schema/PlayerSchema.ts";
 import {PongState} from "../../shared/state/PongState.ts";
 import {Schema} from "@colyseus/schema";
 import {BonusSchema} from "../../shared/schema/BonusSchema.ts";
 
 
-export class GameFunctions {
+export class UtilsServer {
 
     private timeoutRef: NodeJS.Timeout | null = null;
     private readonly state: PongState;
+    private readonly colors = [
+        "red",
+        "blue",
+        "yellow",
+        "purple",
+        "black",
+        "green",
+        "grey",
+        "orange"
+    ]
+
 
     constructor(state: PongState) {
         this.state = state;
     }
 
+    // server method
+    public addAccelerationToPlayerMovement(incrementMovement: number) {
+        return incrementMovement * 2
+    }
+
+    public getRandomColor() {
+        const n = Math.floor(Math.random() * this.colors.length)
+        return this.colors[n]
+    }
 
     public objectBounceFunction(
         ball: Schema<any>,
@@ -106,20 +126,44 @@ export class GameFunctions {
 
     }
 
-    public checkCollisionWithPlayer(ball: BallSchema, player: PlayerSchema) {
+    public checkCollisionWithPlayer(object: Schema<any>, player: PlayerSchema) {
 
-        const raggioPalla = ball.r;
+        let ballObject: BallSchema | BonusSchema;
+
+        if (object instanceof BallSchema) {
+            ballObject = object as BallSchema
+        } else {
+            ballObject = object as BonusSchema;
+        }
+
+
+        const raggioPalla = ballObject.r;
         const raggioPlayer = player.r;
 
 
         // logica applicativa sul player a sinistra x = 50
         if (player.x < 500) {
             // controllo se la x e la y della palla si trovano "dentro" le coordinate x e y del player 1
-            if (ball.x - raggioPalla <= player.x + raggioPlayer &&
-                this.checkCollisionOnYAxe(ball, player)
+            if (ballObject.x - raggioPalla <= player.x + raggioPlayer &&
+                this.checkCollisionOnYAxe(ballObject, player)
             ) {
-                ball.x = player.x + raggioPlayer + 20
-                ball.vx *= -1
+
+                if (ballObject instanceof BallSchema) {
+                    // se l object è una palla deve rimbalzare
+                    ballObject.x = player.x + raggioPlayer + 20
+                    ballObject.vx *= -1
+                } else {
+                    // se l'object è un bonus deve essere "assorbito" e sparire
+                    ballObject.vx = 0;
+                    ballObject.vy = 0;
+                    ballObject.active = false;
+                    // tengo traccia di dove il bonus ha colpito il player (mi basta sapere in che punto sulla x
+                    // per capire quali dei due player ha colpito)
+                    ballObject.hitbox_x = player.x + raggioPlayer + 20
+
+                }
+
+
             }
 
         }
@@ -129,11 +173,22 @@ export class GameFunctions {
             // se la palla sta viaggiando verso la meta dx del campo
             // controllo se ce collisione con il player 2
 
-            if (ball.x + raggioPalla >= player.x - raggioPlayer &&
-                this.checkCollisionOnYAxe(ball, player)
+            if (ballObject.x + raggioPalla >= player.x - raggioPlayer &&
+                this.checkCollisionOnYAxe(ballObject, player)
             ) {
-                ball.x = player.x - raggioPlayer - 20
-                ball.vx *= -1
+                if (ballObject instanceof BallSchema) {
+                    // se l object è una palla deve rimbalzare
+                    ballObject.x = player.x - raggioPlayer - 20
+                    ballObject.vx *= -1
+                } else {
+                    // se l'object è un bonus deve essere "assorbito" e sparire
+                    ballObject.vx = 0;
+                    ballObject.vy = 0;
+                    ballObject.active = false;
+                    // tengo traccia di dove il bonus ha colpito il player (mi basta sapere in che punto sulla x
+                    // per capire quali dei due player ha colpito)
+                    ballObject.hitbox_x = player.x - raggioPlayer + 20
+                }
             }
 
 
