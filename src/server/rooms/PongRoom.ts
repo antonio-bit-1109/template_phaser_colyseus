@@ -50,22 +50,29 @@ export class PongRoom extends Room<PongState> {
             // se determinate condizioni rispettare generare un evento che spawna una moneta che se presa fa il growup del player
             // ogni 20 secondi spawna un bonus
             // il tipo è deciso random
-            if (this.counterDeltaTime >= 10000) {
-                this.counterDeltaTime = 0;
-                const n = Math.random();
 
-                this.state.bonus = new BonusSchema(this.resetBallPositionX, this.resetBallPositionY);
-                const growUpType: IBonusTypes = {
-                    type: "growUp"
-                }
+            // se il bonus è ancora attivo, non ne genero un altro
+            // finchè quello corrente non è stato
+            // "smaltito"
+            if (!this.state.bonus.active) {
+                if (this.counterDeltaTime >= 10000) {
+                    this.counterDeltaTime = 0;
+                    const n = Math.random();
 
-                // evento bonus growUp
-                // if (n === 0 || n < 0.3) {
-                if (n) {
-                    this.state.bonus.type = growUpType.type // bonus di tipo growUp
-                    this.state.bonus.active = true;
-                    console.log("generazione nuovo bonus!")
+                    this.state.bonus = new BonusSchema(this.resetBallPositionX, this.resetBallPositionY);
+                    const growUpType: IBonusTypes = {
+                        type: "growUp"
+                    }
+
+                    // evento bonus growUp
+                    // if (n === 0 || n < 0.3) {
+                    if (n) {
+                        this.state.bonus.type = growUpType.type // bonus di tipo growUp
+                        this.state.bonus.active = true;
+                        console.log("generazione nuovo bonus!")
+                    }
                 }
+                
             }
 
             // movimento e rimbalzo del bonus
@@ -77,7 +84,7 @@ export class PongRoom extends Room<PongState> {
                 this.state.bonus
             )
 
-            this.gameFunctions.objectBounceFunction(this.state.bonus, this.canvasW, this.canvasH, -1.5, false)
+            this.gameFunctions.objectBounceFunction(this.state.bonus, this.canvasW, this.canvasH, -1, false)
 
             // movimento e rimbalzo della palla
             this.gameFunctions.objectMove_x(

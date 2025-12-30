@@ -19,7 +19,8 @@ export class Game extends Scene {
     private readonly namesMap: Map<string, Text> = new Map<string, Text>();
     private messageFromServer: Text;
     private readonly pointsMap: Map<string, Text> = new Map<string, Text>();
-
+    private bonusNotified = false;
+    private bonus: Sprite | null = null;
     client: Colyseus.Client;
     room: Colyseus.Room;
 
@@ -62,8 +63,25 @@ export class Game extends Scene {
 
 
                 // controllo lo stato del bonus
-                if (pongState.bonus && pongState.bonus.active) {
-
+                // se non esiste lo creo
+                if (
+                    pongState.bonus &&
+                    pongState.bonus.active &&
+                    pongState.bonus.type === "growUp" &&
+                    !this.bonusNotified
+                ) {
+                    this.bonusNotified = true
+                    this.bonus = this.add.sprite(
+                        pongState.bonus.x,
+                        pongState.bonus.y,
+                        "bonusGrowUp"
+                    ).setScale(0.5)
+                } else {
+                    // altrimenti aggiorno la sua posizione
+                    if (this.bonus) {
+                        this.bonus.setX(pongState.bonus.x);
+                        this.bonus.setY(pongState.bonus.y)
+                    }
                 }
 
                 if (!this.messageFromServer) {
