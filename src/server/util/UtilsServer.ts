@@ -252,7 +252,7 @@ export class UtilsServer {
             this.clock.clear()
         }
 
-        player.r = 54;
+        player.r = 45;
         ballObject.active = false
         console.log(`Uno de player ha preso il bonus: ${player.playerName}`);
 

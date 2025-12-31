@@ -106,7 +106,7 @@ export class PongRoom extends Room<PongState> {
             })
 
 
-        }, 16.16)
+        }, 14)
 
 
         // ascoltatore dei messaggi dal client

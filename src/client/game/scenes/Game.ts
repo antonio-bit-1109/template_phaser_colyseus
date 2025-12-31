@@ -139,20 +139,32 @@ export class Game extends Scene {
                     // se lo stato del bonus è riportato inattivo, significa che ha colpito un player,
                     // lo distruggo dalla scena e applico il bonus allo sprite del giocatore
                     // controllando solamente il raggio del playerschema
-                    // if (pongState.bonus && !pongState.bonus.active) {
-                    //     this.bonusNotified = false;
-                    //     this.bonus?.destroy(true);
-                    //
-                    //     const playerSprite = this.players.get(sessionId)
-                    //     if (playerSprite) {
-                    //         //this.utilsClient.checkBonusAndModifySprite(pongState.bonus, playerSprite, this.room, player)
-                    //         playerSprite.setScale(player.r === 45 ? 0.5 : 0.3)
-                    //     }
-                    // }
+                    if (pongState.bonus && !pongState.bonus.active) {
+                        this.bonusNotified = false;
+                        this.bonus?.destroy(true);
 
-                    if (player) {
                         const playerSprite = this.players.get(sessionId)
-                        playerSprite?.setScale(player.r === 45 ? 0.5 : 0.3)
+                        if (playerSprite) {
+                            // per miglior effetto visivo uso un tweens (crescita lineare dello scale da 0.3 a 0.5
+                            //playerSprite.setScale(player.r === 45 ? 0.5 : 0.3)
+                            if (player.r === 45) {
+                                this.tweens.add({
+                                    targets: playerSprite,
+                                    scale: 0.5,
+                                    duration: 500,
+                                    ease: 'Linear'
+                                })
+                            }
+
+                            if (player.r === 30) {
+                                this.tweens.add({
+                                    targets: playerSprite,
+                                    scale: 0.3,
+                                    duration: 500,
+                                    ease: 'Linear'
+                                })
+                            }
+                        }
                     }
 
 

@@ -3,6 +3,7 @@
 
 - aumento hitbox del player, a tempo (bonus)
 - diminuzione velocità spostamento player (malus)
+- nebbia nel proprio o altrui campo visivo
   )
 - [x] incrementa e mostra punteggio del player quando fa punto
 
