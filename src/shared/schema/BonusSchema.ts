@@ -13,13 +13,12 @@ export class BonusSchema extends Schema {
     active: boolean = false;
     type: string = "";
 
-    constructor(initialX: number = 100, initialY: number = 350) {
+    constructor(initialX: number = 512, initialY: number = 384) {
         super();
         this.y = initialY;
         this.x = initialX;
     }
-
-
+    
 }
 
 // @ts-ignore

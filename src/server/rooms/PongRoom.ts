@@ -30,17 +30,17 @@ export class PongRoom extends Room<PongState> {
 
         // instanzio direttamente la pallina
         this.state.ball = new BallSchema(this.resetBallPositionX, this.resetBallPositionY)
-        this.utilsServer = new UtilsServer(this.state);
+        this.utilsServer = new UtilsServer(this.state, this.clock);
 
         // loop nel quale descrivere gli eventi che vanno accadendo sul server
         // UN PO IL METODO UPDATE() CHE HA PHASER!
         // delta time = ogni quanto viene chiamata la funzione (ogni 16ms circa)
         this.setSimulationInterval(deltaTime => {
 
-            this.counterDeltaTime += deltaTime;
             // se entrambi i giocatori non sono collegati, la palla non si muove.
             if (this.state.players.size < 2) return;
 
+            this.counterDeltaTime += deltaTime;
             //EVENTI BONUS
             // se determinate condizioni rispettare generare un evento che spawna una moneta che se presa fa il growup del player
             // ogni 20 secondi spawna un bonus
@@ -70,16 +70,20 @@ export class PongRoom extends Room<PongState> {
 
             }
 
-            // movimento e rimbalzo del bonus
-            this.utilsServer.objectMove_x(
-                this.state.bonus
-            )
 
-            this.utilsServer.objectMove_y(
-                this.state.bonus
-            )
+            if (this.state.bonus.active) {
+                // movimento e rimbalzo del bonus
+                this.utilsServer.objectMove_x(
+                    this.state.bonus
+                )
 
-            this.utilsServer.objectBounceFunction(this.state.bonus, this.canvasW, this.canvasH, -1, false)
+                this.utilsServer.objectMove_y(
+                    this.state.bonus
+                )
+
+                this.utilsServer.objectBounceFunction(this.state.bonus, this.canvasW, this.canvasH, -1, false)
+
+            }
 
             // movimento e rimbalzo della palla
             this.utilsServer.objectMove_x(
@@ -95,9 +99,9 @@ export class PongRoom extends Room<PongState> {
             this.state.players.forEach(player => {
                 if (player) {
                     // controlla se la palla collide con il player
-                    this.utilsServer.checkCollisionWithPlayer(this.state.ball, player)
+                    this.utilsServer.checkCollisionWithPlayer(this.state.ball, player, this.resetBallPositionX, this.resetBallPositionY)
                     // controlla se la palla collide con il bonus
-                    this.utilsServer.checkCollisionWithPlayer(this.state.bonus, player)
+                    this.utilsServer.checkCollisionWithPlayer(this.state.bonus, player, this.resetBallPositionX, this.resetBallPositionY)
                 }
             })
 
@@ -129,14 +133,6 @@ export class PongRoom extends Room<PongState> {
             if (playerServer) {
                 playerServer.playerName = message.playerName ? message.playerName : "DEFAULT";
                 playerServer.colorName = this.utilsServer.getRandomColor();
-            }
-        })
-
-        // evento di modifica del raggio del player
-        this.onMessage("change_r_player", (client, message: IMessage) => {
-            const playerServer = this.state.players.get(client.sessionId)
-            if (playerServer && message.player_r) {
-                playerServer.r = message.player_r;
             }
         })
 

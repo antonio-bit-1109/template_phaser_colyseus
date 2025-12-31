@@ -3,12 +3,13 @@ import {PlayerSchema} from "../../shared/schema/PlayerSchema.ts";
 import {PongState} from "../../shared/state/PongState.ts";
 import {Schema} from "@colyseus/schema";
 import {BonusSchema} from "../../shared/schema/BonusSchema.ts";
-
+import {Clock} from "colyseus";
 
 export class UtilsServer {
 
     private timeoutRef: NodeJS.Timeout | null = null;
     private readonly state: PongState;
+    private readonly clock: Clock;
     private readonly colors = [
         "red",
         "blue",
@@ -21,8 +22,9 @@ export class UtilsServer {
     ]
 
 
-    constructor(state: PongState) {
+    constructor(state: PongState, clock: Clock) {
         this.state = state;
+        this.clock = clock;
     }
 
     // server method
@@ -126,7 +128,12 @@ export class UtilsServer {
 
     }
 
-    public checkCollisionWithPlayer(object: Schema<any>, player: PlayerSchema) {
+    public checkCollisionWithPlayer(
+        object: Schema<any>,
+        player: PlayerSchema,
+        resetBallPositionX: number,
+        resetBallPositionY: number
+    ) {
 
         let ballObject: BallSchema | BonusSchema;
 
@@ -152,15 +159,18 @@ export class UtilsServer {
                     // se l object è una palla deve rimbalzare
                     ballObject.x = player.x + raggioPlayer + 20
                     ballObject.vx *= -1
+                    return;
                 } else {
                     // se l'object è un bonus deve essere "assorbito" e sparire
                     ballObject.vx = 0;
                     ballObject.vy = 0;
-                    ballObject.active = false;
+                    ballObject.x = resetBallPositionX;
+                    ballObject.y = resetBallPositionY;
                     // tengo traccia di dove il bonus ha colpito il player (mi basta sapere in che punto sulla x
                     // per capire quali dei due player ha colpito)
                     ballObject.hitbox_x = player.x + raggioPlayer + 20
-
+                    this.collisionDetectedWithBonusAndChangeRaggioPlayer(player, ballObject)
+                    return;
                 }
 
 
@@ -180,14 +190,18 @@ export class UtilsServer {
                     // se l object è una palla deve rimbalzare
                     ballObject.x = player.x - raggioPlayer - 20
                     ballObject.vx *= -1
+                    return;
                 } else {
                     // se l'object è un bonus deve essere "assorbito" e sparire
                     ballObject.vx = 0;
                     ballObject.vy = 0;
-                    ballObject.active = false;
+                    ballObject.x = resetBallPositionX;
+                    ballObject.y = resetBallPositionY;
                     // tengo traccia di dove il bonus ha colpito il player (mi basta sapere in che punto sulla x
                     // per capire quali dei due player ha colpito)
                     ballObject.hitbox_x = player.x - raggioPlayer + 20
+                    this.collisionDetectedWithBonusAndChangeRaggioPlayer(player, ballObject);
+                    return;
                 }
             }
 
@@ -229,5 +243,24 @@ export class UtilsServer {
             ball.vy = newVy;
         }, 1000)
 
+    }
+
+
+    private collisionDetectedWithBonusAndChangeRaggioPlayer(player: PlayerSchema, ballObject: BonusSchema) {
+
+        if (this.clock.running) {
+            this.clock.clear()
+        }
+
+        player.r = 54;
+        ballObject.active = false
+        console.log(`Uno de player ha preso il bonus: ${player.playerName}`);
+
+        this.clock.setTimeout(() => {
+            if (player) {
+                player.r = 30;
+                console.log(`Effetto bonus terminato per ${player.playerName}`);
+            }
+        }, 5000)
     }
 }

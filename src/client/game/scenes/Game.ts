@@ -138,16 +138,21 @@ export class Game extends Scene {
 
                     // se lo stato del bonus è riportato inattivo, significa che ha colpito un player,
                     // lo distruggo dalla scena e applico il bonus allo sprite del giocatore
-                    // perche ancora è presente l informazione sul tipo di bonus
-                    if (pongState.bonus && !pongState.bonus.active) {
-                        this.bonusNotified = false;
-                        this.bonus?.destroy(true);
+                    // controllando solamente il raggio del playerschema
+                    // if (pongState.bonus && !pongState.bonus.active) {
+                    //     this.bonusNotified = false;
+                    //     this.bonus?.destroy(true);
+                    //
+                    //     const playerSprite = this.players.get(sessionId)
+                    //     if (playerSprite) {
+                    //         //this.utilsClient.checkBonusAndModifySprite(pongState.bonus, playerSprite, this.room, player)
+                    //         playerSprite.setScale(player.r === 45 ? 0.5 : 0.3)
+                    //     }
+                    // }
 
+                    if (player) {
                         const playerSprite = this.players.get(sessionId)
-                        if (playerSprite) {
-                            this.utilsClient.checkBonusAndModifySprite(pongState.bonus, playerSprite, this.room, player)
-                        }
-
+                        playerSprite?.setScale(player.r === 45 ? 0.5 : 0.3)
                     }
 
 
