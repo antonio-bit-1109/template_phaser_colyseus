@@ -169,7 +169,7 @@ export class UtilsServer {
                     // tengo traccia di dove il bonus ha colpito il player (mi basta sapere in che punto sulla x
                     // per capire quali dei due player ha colpito)
                     ballObject.hitbox_x = player.x + raggioPlayer + 20
-                    this.collisionDetectedWithBonusAndChangeRaggioPlayer(player, ballObject)
+                    this.collisionDetectedWithBonusDoAction(player, ballObject)
                     return;
                 }
 
@@ -200,7 +200,7 @@ export class UtilsServer {
                     // tengo traccia di dove il bonus ha colpito il player (mi basta sapere in che punto sulla x
                     // per capire quali dei due player ha colpito)
                     ballObject.hitbox_x = player.x - raggioPlayer + 20
-                    this.collisionDetectedWithBonusAndChangeRaggioPlayer(player, ballObject);
+                    this.collisionDetectedWithBonusDoAction(player, ballObject);
                     return;
                 }
             }
@@ -246,21 +246,30 @@ export class UtilsServer {
     }
 
 
-    private collisionDetectedWithBonusAndChangeRaggioPlayer(player: PlayerSchema, ballObject: BonusSchema) {
+    private collisionDetectedWithBonusDoAction(player: PlayerSchema, ballObject: BonusSchema) {
 
         if (this.clock.running) {
             this.clock.clear()
         }
 
-        player.r = 45;
-        ballObject.active = false
-        console.log(`Uno de player ha preso il bonus: ${player.playerName}`);
 
-        this.clock.setTimeout(() => {
-            if (player) {
-                player.r = 30;
-                console.log(`Effetto bonus terminato per ${player.playerName}`);
-            }
-        }, 5000)
+        if (ballObject.type === "growUp") {
+            player.r = 45;
+            ballObject.active = false
+            console.log(`Uno de player ha preso il bonus: ${player.playerName}`);
+
+            this.clock.setTimeout(() => {
+                if (player) {
+                    player.r = 30;
+                    console.log(`Effetto bonus terminato per ${player.playerName}`);
+                }
+            }, 5000)
+        }
+
+
+        if (ballObject.type === "slowed") {
+
+        }
+
     }
 }

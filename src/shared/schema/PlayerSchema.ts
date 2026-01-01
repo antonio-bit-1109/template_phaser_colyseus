@@ -6,6 +6,8 @@ export class PlayerSchema extends Schema {
 
     y: number;
     x: number;
+    vx: number = 4;
+    vy: number = 4;
     r: number = 30;
     playerName = "";
     playerPoints = 0;

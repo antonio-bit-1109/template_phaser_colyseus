@@ -63,15 +63,27 @@ export class Game extends Scene {
                 if (
                     pongState.bonus &&
                     pongState.bonus.active &&
-                    pongState.bonus.type === "growUp" &&
+                    // pongState.bonus.type === "growUp" &&
                     !this.bonusNotified
                 ) {
                     this.bonusNotified = true
-                    this.bonus = this.add.sprite(
-                        pongState.bonus.x,
-                        pongState.bonus.y,
-                        "bonusGrowUp"
-                    ).setScale(0.5)
+
+                    if (pongState.bonus.type === "growUp") {
+                        this.bonus = this.add.sprite(
+                            pongState.bonus.x,
+                            pongState.bonus.y,
+                            "bonusGrowUp"
+                        ).setScale(0.5)
+                    } else if (pongState.bonus.type === "slowed") {
+                        this.bonus = this.add.sprite(
+                            pongState.bonus.x,
+                            pongState.bonus.y,
+                            "malusSlowed"
+                        ).setScale(0.5)
+                            .setRotation(Phaser.Math.DegToRad(180))
+                    }
+
+
                 } else {
                     // altrimenti aggiorno la sua posizione
                     if (this.bonus) {

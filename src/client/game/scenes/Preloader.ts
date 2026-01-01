@@ -33,6 +33,7 @@ export class Preloader extends Scene {
         this.load.image("player1", "dude_ping_pong.png")
         this.load.image("player2", "boss_ping_pong.png")
         this.load.image("bonusGrowUp", "Bonus_1_1.png")
+        this.load.image("malusSlowed", "Bonus_2_1.png")
     }
 
     create() {
