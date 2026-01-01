@@ -17,8 +17,23 @@ export class BonusSchema extends Schema {
         super();
         this.y = initialY;
         this.x = initialX;
+        this.defineDirectionMovementOnXYAxes();
     }
-    
+
+    private defineDirectionMovementOnXYAxes() {
+
+        let directionX = Math.random();
+        let directionY = Math.random();
+
+        if (directionX > 0 && directionX <= 0.5) {
+            this.vx *= -1;
+        }
+
+        if (directionY >= 0.5) {
+            this.vy *= -1;
+        }
+    }
+
 }
 
 // @ts-ignore
