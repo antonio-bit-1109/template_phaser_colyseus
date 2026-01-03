@@ -50,21 +50,25 @@ export class PongRoom extends Room<PongState> {
             // finchè quello corrente non è stato
             // "smaltito"
             if (!this.state.bonus.active) {
-                if (this.counterDeltaTime >= 20000) {
+                if (this.counterDeltaTime >= 10000) {
                     this.counterDeltaTime = 0;
                     const n = Math.random();
 
                     this.state.bonus = new BonusSchema(this.resetBallPositionX, this.resetBallPositionY);
-                    const growUpType: IBonusTypes = {
+                    const bonusTypes: IBonusTypes = {
                         type: "growUp"
                     }
 
                     // evento bonus growUp
-                    // if (n === 0 || n < 0.3) {
-                    if (n) {
-                        this.state.bonus.type = growUpType.type // bonus di tipo growUp
+                    if (n < 0.5) {
+                        this.state.bonus.type = bonusTypes.type // bonus di tipo growUp
                         this.state.bonus.active = true;
                         console.log("generazione nuovo bonus!")
+                    } else if (n >= 0.5) {
+                        // evento slowed
+                        bonusTypes.type = "slowed";
+                        this.state.bonus.type = bonusTypes.type
+                        this.state.bonus.active = true;
                     }
                 }
 
@@ -93,37 +97,49 @@ export class PongRoom extends Room<PongState> {
                 this.state.ball
             );
 
+            console.log(this.state.ball.x)
+            console.log(this.state.ball.y)
+            console.log(this.state.ball.vx)
+            console.log(this.state.ball.vy)
+
+
             // set bounce logic
             this.utilsServer.objectBounceFunction(this.state.ball, this.canvasW, this.canvasH, -1, true);
 
             this.state.players.forEach(player => {
                 if (player) {
                     // controlla se la palla collide con il player
-                    this.utilsServer.checkCollisionWithPlayer(this.state.ball, player, this.resetBallPositionX, this.resetBallPositionY)
+                    this.state.ball && this.utilsServer.checkCollisionWithPlayer(this.state.ball, player, this.resetBallPositionX, this.resetBallPositionY)
                     // controlla se la palla collide con il bonus
-                    this.utilsServer.checkCollisionWithPlayer(this.state.bonus, player, this.resetBallPositionX, this.resetBallPositionY)
+                    this.state.bonus && this.utilsServer.checkCollisionWithPlayer(this.state.bonus, player, this.resetBallPositionX, this.resetBallPositionY)
                 }
             })
 
 
-        }, 14)
+        }, 16.16)
 
 
         // ascoltatore dei messaggi dal client
         // evento di movimento del player
         this.onMessage("move", (client, data: IMessage) => {
             const player = this.state.players.get(client.sessionId);
+
+            // s eil player tocca il margine in alto della canvas
             if (player) {
                 if (player.y - player.r < 0) {
                     player.y = player.r + 10
                     return;
                 }
 
+                // s eil player tocca il margine in basso della canvas
                 if (player.y + player.r > this.canvasH) {
                     player.y = this.canvasH - player.r - 10
                     return;
                 }
-                player.y += data.direction ? this.utilsServer.addAccelerationToPlayerMovement(data.direction) : 0;
+                // passo 1 o -1 dal client per calcolare lo spostamento positivo o negativo sull asse y
+                if (data.direction) {
+                    player.y += (player.vy * data.direction)
+                }
             }
         })
 

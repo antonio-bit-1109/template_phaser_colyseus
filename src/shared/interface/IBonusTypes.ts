@@ -1,3 +1,3 @@
 export interface IBonusTypes {
-    type: "growUp"
+    type: "growUp" | "slowed"
 }

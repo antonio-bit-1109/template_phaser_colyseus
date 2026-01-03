@@ -63,15 +63,27 @@ export class Game extends Scene {
                 if (
                     pongState.bonus &&
                     pongState.bonus.active &&
-                    pongState.bonus.type === "growUp" &&
+                    // pongState.bonus.type === "growUp" &&
                     !this.bonusNotified
                 ) {
                     this.bonusNotified = true
-                    this.bonus = this.add.sprite(
-                        pongState.bonus.x,
-                        pongState.bonus.y,
-                        "bonusGrowUp"
-                    ).setScale(0.5)
+
+                    if (pongState.bonus.type === "growUp") {
+                        this.bonus = this.add.sprite(
+                            pongState.bonus.x,
+                            pongState.bonus.y,
+                            "bonusGrowUp"
+                        ).setScale(0.5)
+                    } else if (pongState.bonus.type === "slowed") {
+                        this.bonus = this.add.sprite(
+                            pongState.bonus.x,
+                            pongState.bonus.y,
+                            "malusSlowed"
+                        ).setScale(0.5)
+                            .setRotation(Phaser.Math.DegToRad(180))
+                    }
+
+
                 } else {
                     // altrimenti aggiorno la sua posizione
                     if (this.bonus) {
@@ -215,7 +227,15 @@ export class Game extends Scene {
                             playerSprite.setScale(
                                 player.r === 45 ? 0.5 : 0.3
                             )
+                            // se il playersprite ha una velocita y = 2 significa che ha preso malus "slowed"
+                            // e lo tingo di un rosso chiaro
+                            if (player.vy === 4) {
+                                playerSprite.setTint(0xFF9999)
+                            } else if (player.vy === 8) {
+                                playerSprite.clearTint()
+                            }
                         }
+
 
                         // se dal server mi torna il nome dle player
                         // prendo la mappa k-v dei nomi e aggiorno la posizione
@@ -263,12 +283,12 @@ export class Game extends Scene {
         }
 
         if (this.utilsClient.getCursor().up.isDown) {
-            message.direction = -4;
+            message.direction = -1;
             this.room.send("move", message)
         }
 
         if (this.utilsClient.getCursor().down.isDown) {
-            message.direction = +4;
+            message.direction = 1;
             this.room.send("move", message)
         }
 

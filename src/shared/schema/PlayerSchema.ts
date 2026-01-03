@@ -6,6 +6,8 @@ export class PlayerSchema extends Schema {
 
     y: number;
     x: number;
+    vx: number = 8;
+    vy: number = 8;
     r: number = 30;
     playerName = "";
     playerPoints = 0;
@@ -31,5 +33,7 @@ defineTypes(PlayerSchema, {
     playerName: "string",
     playerPoints: "number",
     colorName: "string",
-    index: "number"
+    index: "number",
+    vx: "number",
+    vy: "number"
 });
