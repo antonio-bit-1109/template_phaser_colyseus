@@ -28,9 +28,9 @@ export class UtilsServer {
     }
 
     // server method
-    public addAccelerationToPlayerMovement(incrementMovement: number) {
-        return incrementMovement * 2
-    }
+    // public addAccelerationToPlayerMovement(incrementMovement: number) {
+    //     return incrementMovement * 2
+    // }
 
     public getRandomColor() {
         const n = Math.floor(Math.random() * this.colors.length)
@@ -256,19 +256,27 @@ export class UtilsServer {
         if (ballObject.type === "growUp") {
             player.r = 45;
             ballObject.active = false
-            console.log(`Uno de player ha preso il bonus: ${player.playerName}`);
+            console.log(`Uno de player ha preso il bonus grow up: ${player.playerName}`);
 
             this.clock.setTimeout(() => {
                 if (player) {
                     player.r = 30;
-                    console.log(`Effetto bonus terminato per ${player.playerName}`);
+                    console.log(`Effetto bonus grow up terminato per ${player.playerName}`);
                 }
             }, 5000)
         }
 
 
         if (ballObject.type === "slowed") {
-
+            player.vy = 4;
+            ballObject.active = false
+            console.log("il player: " + player.playerName + " ha preso il malus slowed")
+            this.clock.setTimeout(() => {
+                if (player) {
+                    player.vy = 8;
+                    console.log(`Effetto malus slowed terminato per ${player.playerName}`);
+                }
+            }, 5000)
         }
 
     }

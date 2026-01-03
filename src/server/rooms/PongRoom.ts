@@ -50,7 +50,7 @@ export class PongRoom extends Room<PongState> {
             // finchè quello corrente non è stato
             // "smaltito"
             if (!this.state.bonus.active) {
-                if (this.counterDeltaTime >= 5000) {
+                if (this.counterDeltaTime >= 20000) {
                     this.counterDeltaTime = 0;
                     const n = Math.random();
 
@@ -60,12 +60,13 @@ export class PongRoom extends Room<PongState> {
                     }
 
                     // evento bonus growUp
-                    // if (n === 0 || n < 0.3) {
-                    if (n < 0.5) {
+                    // if (n < 0.5) {
+                    if (!n) {
                         this.state.bonus.type = bonusTypes.type // bonus di tipo growUp
                         this.state.bonus.active = true;
                         console.log("generazione nuovo bonus!")
-                    } else if (n >= 0.5) {
+                    } else if (n) {
+                        // evento slowed
                         bonusTypes.type = "slowed";
                         this.state.bonus.type = bonusTypes.type
                         this.state.bonus.active = true;
@@ -110,7 +111,7 @@ export class PongRoom extends Room<PongState> {
             })
 
 
-        }, 14)
+        }, 16.16)
 
 
         // ascoltatore dei messaggi dal client
@@ -130,7 +131,7 @@ export class PongRoom extends Room<PongState> {
                 if (data.direction) {
                     player.vy = data.direction;
                 }
-                player.y += player.vy ? this.utilsServer.addAccelerationToPlayerMovement(player.vy) : 0;
+                player.y += player.vy
             }
         })
 
