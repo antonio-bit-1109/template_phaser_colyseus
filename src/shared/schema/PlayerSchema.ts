@@ -14,6 +14,7 @@ export class PlayerSchema extends Schema {
     colorName = "";
     index = 999;
     isGrowUp = false
+    hp = 100;
 
     constructor(index: number, initialX: number = 100, initialY: number = 350) {
         super();
@@ -35,5 +36,6 @@ defineTypes(PlayerSchema, {
     colorName: "string",
     index: "number",
     vx: "number",
-    vy: "number"
+    vy: "number",
+    hp: "number"
 });

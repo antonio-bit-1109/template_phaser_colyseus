@@ -193,6 +193,11 @@ export class Game extends Scene {
                             )
                         this.players.set(sessionId, p);
 
+                        // quando creo il player gli aggiungo le due barre della vita nel client
+                        this.utilsClient.createLowerHpBar(player, sessionId)
+                        this.utilsClient.createUpperHpBar(player, sessionId)
+
+
                         // se il giocatore nonha ancora un nome glielo fornisco da quello inserito nel client precedentemente
                         // inviandolo al server
                         if (player.playerName === "") {
@@ -210,7 +215,7 @@ export class Game extends Scene {
                         if (!this.namesMap.get(sessionId)) {
                             const nameTag = this.add.text(
                                 player.x - 15,
-                                player.y - 70,
+                                player.y - 100,
                                 player.playerName,
                                 {
                                     color: player.colorName,
@@ -227,6 +232,8 @@ export class Game extends Scene {
                             playerSprite.setScale(
                                 player.r === 45 ? 0.5 : 0.3
                             )
+                            this.utilsClient.updateLowerPositionBar(player, sessionId)
+                            this.utilsClient.updateUpperPositionBar(player, sessionId)
                             // se il playersprite ha una velocita y = 2 significa che ha preso malus "slowed"
                             // e lo tingo di un rosso chiaro
                             if (player.vy === 4) {
@@ -243,7 +250,7 @@ export class Game extends Scene {
                             const tagText = this.namesMap.get(sessionId)
                             if (tagText) {
                                 tagText.setX(player.x - 15)
-                                tagText.setY(player.y - 70)
+                                tagText.setY(player.y - 100)
                             }
                         }
                     }
