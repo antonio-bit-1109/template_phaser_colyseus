@@ -11,3 +11,5 @@ r = 45 se scalo lo sprite da 0.3 a 0.5
 
 setscale = 0.3 --- r= 30;
 setscale = 0.5 --- r = 45;
+
+- [] ha senso creare il pong state con la posizione default del bullets X e Y a -1000 , -2000 ?? 

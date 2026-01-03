@@ -4,12 +4,11 @@ import {defineTypes, Schema} from "@colyseus/schema";
 // schema che definisce l'oggetto bonus
 export class BulletSchema extends Schema {
 
-    y: number;
-    x: number;
-    r: number = 5;
-    vx: number = 16;
-    vy: number = 16;
-
+    y: number; // pos x
+    x: number; // pos y
+    r: number = 2.5; // raggio
+    vx: number = 16; // veocità sulla x
+    vy: number = 16; // vel sulla y
 
     constructor(x = -1000, y = -2000) {
         super();
