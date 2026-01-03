@@ -50,7 +50,7 @@ export class PongRoom extends Room<PongState> {
             // finchè quello corrente non è stato
             // "smaltito"
             if (!this.state.bonus.active) {
-                if (this.counterDeltaTime >= 20000) {
+                if (this.counterDeltaTime >= 10000) {
                     this.counterDeltaTime = 0;
                     const n = Math.random();
 
@@ -60,12 +60,11 @@ export class PongRoom extends Room<PongState> {
                     }
 
                     // evento bonus growUp
-                    // if (n < 0.5) {
-                    if (!n) {
+                    if (n < 0.5) {
                         this.state.bonus.type = bonusTypes.type // bonus di tipo growUp
                         this.state.bonus.active = true;
                         console.log("generazione nuovo bonus!")
-                    } else if (n) {
+                    } else if (n >= 0.5) {
                         // evento slowed
                         bonusTypes.type = "slowed";
                         this.state.bonus.type = bonusTypes.type
@@ -98,6 +97,12 @@ export class PongRoom extends Room<PongState> {
                 this.state.ball
             );
 
+            console.log(this.state.ball.x)
+            console.log(this.state.ball.y)
+            console.log(this.state.ball.vx)
+            console.log(this.state.ball.vy)
+
+
             // set bounce logic
             this.utilsServer.objectBounceFunction(this.state.ball, this.canvasW, this.canvasH, -1, true);
 
@@ -118,20 +123,23 @@ export class PongRoom extends Room<PongState> {
         // evento di movimento del player
         this.onMessage("move", (client, data: IMessage) => {
             const player = this.state.players.get(client.sessionId);
+
+            // s eil player tocca il margine in alto della canvas
             if (player) {
                 if (player.y - player.r < 0) {
                     player.y = player.r + 10
                     return;
                 }
 
+                // s eil player tocca il margine in basso della canvas
                 if (player.y + player.r > this.canvasH) {
                     player.y = this.canvasH - player.r - 10
                     return;
                 }
+                // passo 1 o -1 dal client per calcolare lo spostamento positivo o negativo sull asse y
                 if (data.direction) {
-                    player.vy = data.direction;
+                    player.y += (player.vy * data.direction)
                 }
-                player.y += player.vy
             }
         })
 

@@ -5,7 +5,6 @@ import Sprite = Phaser.GameObjects.Sprite;
 import {IMessage} from "../../../shared/interface/IMessage.ts";
 import Text = Phaser.GameObjects.Text;
 import {UtilsClient} from "../util/UtilsClient.ts";
-import {PlayerSchema} from "../../../shared/schema/PlayerSchema.ts";
 
 export class Game extends Scene {
 
@@ -230,9 +229,9 @@ export class Game extends Scene {
                             )
                             // se il playersprite ha una velocita y = 2 significa che ha preso malus "slowed"
                             // e lo tingo di un rosso chiaro
-                            if (player.vy === 2) {
+                            if (player.vy === 4) {
                                 playerSprite.setTint(0xFF9999)
-                            } else if (player.vy === 4) {
+                            } else if (player.vy === 8) {
                                 playerSprite.clearTint()
                             }
                         }
@@ -278,25 +277,18 @@ export class Game extends Scene {
         super.update(time, delta);
 
         if (!this.room) return;
-        // prendo gli schema dei player dal server e controllo quale sia il player di questo client grazie alla session Id del client
-        const myPlayer: PlayerSchema = this.room.state.players.get(this.room.sessionId);
-        if (!myPlayer) return;
-
-        const yVelocity = myPlayer.vy
-        console.log(myPlayer, "my player")
-        console.log(yVelocity, " velocita y ")
 
         const message: IMessage = {
             direction: 0
         }
 
         if (this.utilsClient.getCursor().up.isDown) {
-            message.direction = yVelocity < 0 ? yVelocity : -yVelocity;
+            message.direction = -1;
             this.room.send("move", message)
         }
 
         if (this.utilsClient.getCursor().down.isDown) {
-            message.direction = yVelocity > 0 ? yVelocity : -yVelocity;
+            message.direction = 1;
             this.room.send("move", message)
         }
 
