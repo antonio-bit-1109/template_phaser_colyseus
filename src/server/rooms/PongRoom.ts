@@ -6,6 +6,7 @@ import {UtilsServer} from "../util/UtilsServer.ts";
 import {IMessage} from "../../shared/interface/IMessage.ts";
 import {BonusSchema} from "../../shared/schema/BonusSchema.ts";
 import {IBonusTypes} from "../../shared/interface/IBonusTypes.ts";
+import {BulletSchema} from "../../shared/schema/BulletSchema.ts";
 
 // contiene la logica di connessione e le interazioni per una determinata room 'universo di gioco'
 // in questo caso qui sarà contenuta tutta la logica di connessione alla stanza che gestisce una partita di pong
@@ -97,11 +98,6 @@ export class PongRoom extends Room<PongState> {
                 this.state.ball
             );
 
-            console.log(this.state.ball.x)
-            console.log(this.state.ball.y)
-            console.log(this.state.ball.vx)
-            console.log(this.state.ball.vy)
-
 
             // set bounce logic
             this.utilsServer.objectBounceFunction(this.state.ball, this.canvasW, this.canvasH, -1, true);
@@ -115,9 +111,40 @@ export class PongRoom extends Room<PongState> {
                 }
             })
 
+            if (this.state.bullets.size > 0) {
+                // se ci soon bullet che sono stati generati li sposto linearmente sull asse x
+                this.state.bullets.forEach(bullet => {
+
+                    // se il bullet esce dalla canvas lo elimino
+                    if (bullet.x > this.canvasW + 100) {
+                        this.state.bullets.delete(bullet.id)
+                    }
+                    if (bullet.x < -100) {
+                        this.state.bullets.delete(bullet.id)
+                    }
+
+                    this.utilsServer.objectMove_x(bullet)
+
+                    // controllo collisione tra bullet e player
+                    this.state.players.forEach(player => {
+                        this.utilsServer.checkCollisionWithPlayer(bullet, player, 9999, 9999)
+                    })
+                })
+            }
+
 
         }, 16.16)
 
+
+        // prendo evento di generazione dle bullet, lo creo e lo sposto di fronte al player che lo ha generato.
+        this.onMessage("shot", (client, data: IMessage) => {
+            if (data.playerCoord) {
+                const id = crypto.randomUUID()
+                const bullet = new BulletSchema(id, client.sessionId, data.playerCoord.x, data.playerCoord.y)
+                this.state.bullets.set(id, bullet);
+                console.log(this.state.bullets)
+            }
+        })
 
         // ascoltatore dei messaggi dal client
         // evento di movimento del player

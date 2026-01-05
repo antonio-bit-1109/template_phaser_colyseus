@@ -8,17 +8,21 @@ import {UtilsClient} from "../util/UtilsClient.ts";
 
 export class Game extends Scene {
 
-    private utilsClient: UtilsClient;
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
+    private utilsClient: UtilsClient;
+    private lastShotTime: number = 0;
     private ball: Phaser.GameObjects.Sprite;
     private readonly players: Map<string, Sprite> = new Map<string, Sprite>();
-    private playerName: string = "";
     private readonly namesMap: Map<string, Text> = new Map<string, Text>();
-    private messageFromServer: Text;
     private readonly pointsMap: Map<string, Text> = new Map<string, Text>();
+    private readonly bulletsMap: Map<string, Sprite> = new Map<string, Sprite>();
+    private playerName: string = "";
+    private messageFromServer: Text;
     private bonusNotified = false;
     private bonus: Sprite | null = null;
+
+
     client: Colyseus.Client;
     room: Colyseus.Room;
 
@@ -268,6 +272,45 @@ export class Game extends Scene {
                     }
                 })
 
+                // GESTIONE PROIETTILI
+                // se nel server esistono proiettili, li mostro
+
+                pongState.bullets.forEach(bullet => {
+
+                    if (!this.bulletsMap.get(bullet.id)) {
+                        const b = this.add.sprite(
+                            bullet.x,
+                            bullet.y,
+                            "bullet"
+                        )
+
+                        // se il proiettile sta venendo sparato dal giocatore 2 ruoto lo sprite
+                        if (bullet.initialX > 500) {
+                            b.setRotation(Phaser.Math.DegToRad(180))
+                            b.setTint(0xFF0000)
+                        }
+
+                        this.bulletsMap.set(bullet.id, b)
+                    } else {
+                        const bSprite = this.bulletsMap.get(bullet.id);
+                        bSprite?.setX(bullet.x)
+                    }
+
+                    const widthCanvas = this.game.config.width as number
+                    // quando il proiettile supera le dimensioni della canva sulla x lo cancello anche dal client
+                    if (
+                        bullet.x > widthCanvas ||
+                        bullet.x < 0
+                    ) {
+                        const bull = this.bulletsMap.get(bullet.id)
+                        bull?.destroy(true);
+                        this.bulletsMap.delete(bullet.id)
+                        console.log("bullet fuori dalla canvas : " + bullet.x + " eliminato!")
+                    }
+
+
+                })
+
             })
 
 
@@ -283,12 +326,15 @@ export class Game extends Scene {
     update(time: number, delta: number) {
         super.update(time, delta);
 
+        if (!this.room || !this.room.state || !this.room.state.players) return;
+
         if (!this.room) return;
 
         const message: IMessage = {
             direction: 0
         }
 
+        // movimento up down
         if (this.utilsClient.getCursor().up.isDown) {
             message.direction = -1;
             this.room.send("move", message)
@@ -297,6 +343,26 @@ export class Game extends Scene {
         if (this.utilsClient.getCursor().down.isDown) {
             message.direction = 1;
             this.room.send("move", message)
+        }
+
+        // mi serve di sapere chi sta generando il bullet
+        const player = this.room.state.players.get(this.room.sessionId);
+        if (!player) return;
+
+
+        // press space per sparare (generare bullet sul server)
+        // just down registra un solo evento per press della key
+        if (Phaser.Input.Keyboard.JustDown(this.utilsClient.getCursor().space)) {
+            message.playerCoord = {x: player.x, y: player.y}
+
+            // posso sparare solo una volta ogni secondo
+            if (time > this.lastShotTime + 1000) {
+                this.room.send("shot", message)
+
+                this.lastShotTime = time;
+            }
+
+
         }
 
     }

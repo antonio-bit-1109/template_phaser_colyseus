@@ -4,6 +4,7 @@ import {PongState} from "../../shared/state/PongState.ts";
 import {Schema} from "@colyseus/schema";
 import {BonusSchema} from "../../shared/schema/BonusSchema.ts";
 import {Clock} from "colyseus";
+import {BulletSchema} from "../../shared/schema/BulletSchema.ts";
 
 export class UtilsServer {
 
@@ -116,7 +117,7 @@ export class UtilsServer {
     }
 
     public objectMove_x(ball: Schema<any>) {
-        if (ball instanceof BallSchema || ball instanceof BonusSchema) {
+        if (ball instanceof BallSchema || ball instanceof BonusSchema || ball instanceof BulletSchema) {
             ball.x += ball.vx;
         }
     }
@@ -135,12 +136,14 @@ export class UtilsServer {
         resetBallPositionY: number
     ) {
 
-        let ballObject: BallSchema | BonusSchema;
+        let ballObject: BallSchema | BonusSchema | BulletSchema;
 
         if (object instanceof BallSchema) {
             ballObject = object as BallSchema
-        } else {
+        } else if (object instanceof BonusSchema) {
             ballObject = object as BonusSchema;
+        } else {
+            ballObject = object as BulletSchema
         }
 
 
@@ -159,8 +162,8 @@ export class UtilsServer {
                     // se l object è una palla deve rimbalzare
                     ballObject.x = player.x + raggioPlayer + 20
                     ballObject.vx *= -1
-                    return;
-                } else {
+
+                } else if (ballObject instanceof BonusSchema) {
                     // se l'object è un bonus deve essere "assorbito" e sparire
                     ballObject.vx = 0;
                     ballObject.vy = 0;
@@ -170,7 +173,10 @@ export class UtilsServer {
                     // per capire quali dei due player ha colpito)
                     ballObject.hitbox_x = player.x + raggioPlayer + 20
                     this.collisionDetectedWithBonusDoAction(player, ballObject)
-                    return;
+
+                } else {
+                    // caso in cui object è un istanza di bullet schema
+                    this.CheckPlayerHittedByBullet(player)
                 }
 
 
@@ -190,8 +196,8 @@ export class UtilsServer {
                     // se l object è una palla deve rimbalzare
                     ballObject.x = player.x - raggioPlayer - 20
                     ballObject.vx *= -1
-                    return;
-                } else {
+
+                } else if (ballObject instanceof BonusSchema) {
                     // se l'object è un bonus deve essere "assorbito" e sparire
                     ballObject.vx = 0;
                     ballObject.vy = 0;
@@ -201,12 +207,42 @@ export class UtilsServer {
                     // per capire quali dei due player ha colpito)
                     ballObject.hitbox_x = player.x - raggioPlayer + 20
                     this.collisionDetectedWithBonusDoAction(player, ballObject);
-                    return;
+
+                } else {
+                    // caso in cui object è un istanza di bullet schema
+                    this.CheckPlayerHittedByBullet(player)
                 }
             }
 
 
     }
+
+    // funzione che sottrae hp al player colpito dal bullet
+    private CheckPlayerHittedByBullet(player: PlayerSchema) {
+        if (!player.hitByBullet) {
+            console.log("player colpito! in posizione : x -->" + player.x + " y: " + player.y + " hp : " + player.hp)
+            player.hp -= 40;
+
+            // se il player va ad hp negativi lo resetto e do un punto all avvesario
+            if (player.hp <= 0) {
+                console.log("player abbattuto! reset vita e punto all avversario!")
+                player.hp = 100;
+                const arrPlayers = Array.from(this.state.players.values())
+                arrPlayers.forEach(p => {
+                    if (p.index !== player.index) {
+                        p.playerPoints += 2
+                    }
+                })
+            }
+
+
+            player.hitByBullet = true;
+            this.clock.setTimeout(() => {
+                player.resetHitByBullet()
+            }, 700)
+        }
+    }
+
 
     private checkCollisionOnYAxe(ball: BallSchema, player: PlayerSchema) {
         // check collisione con parte superiore del dude
@@ -235,8 +271,8 @@ export class UtilsServer {
         this.timeoutRef = setTimeout(() => {
             const randomvX = Math.floor(Math.random() * 2);
             const randomvY = Math.floor(Math.random() * 2);
-            let newvX = randomvX === 0 ? -4 : 4
-            let newVy = randomvY === 0 ? -4 : 4
+            let newvX = randomvX === 0 ? -ball.resetVx : ball.resetVx
+            let newVy = randomvY === 0 ? -ball.resetVy : ball.resetVy
             ball.x = resetPosX;
             ball.y = resetPosY;
             ball.vx = newvX;
@@ -247,11 +283,6 @@ export class UtilsServer {
 
 
     private collisionDetectedWithBonusDoAction(player: PlayerSchema, ballObject: BonusSchema) {
-
-        if (this.clock.running) {
-            this.clock.clear()
-        }
-
 
         if (ballObject.type === "growUp") {
             player.r = 45;

@@ -13,7 +13,7 @@ export class PlayerSchema extends Schema {
     playerPoints = 0;
     colorName = "";
     index = 999;
-    isGrowUp = false
+    hitByBullet = false
     hp = 100;
 
     constructor(index: number, initialX: number = 100, initialY: number = 350) {
@@ -23,6 +23,9 @@ export class PlayerSchema extends Schema {
         this.index = index;
     }
 
+    public resetHitByBullet() {
+        this.hitByBullet = false;
+    }
 
 }
 
@@ -37,5 +40,6 @@ defineTypes(PlayerSchema, {
     index: "number",
     vx: "number",
     vy: "number",
-    hp: "number"
+    hp: "number",
+    hitByBullet: "boolean"
 });

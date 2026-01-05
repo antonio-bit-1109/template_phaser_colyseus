@@ -12,6 +12,8 @@ export class BonusSchema extends Schema {
     hitbox_x = 0;
     active: boolean = false;
     type: string = "";
+    resetVx = 0;
+    resetVy = 0;
 
     constructor(initialX: number = 512, initialY: number = 384) {
         super();
@@ -45,5 +47,7 @@ defineTypes(BonusSchema, {
     type: "string",
     vx: "number",
     vy: "number",
-    hitbox_x: "number"
+    hitbox_x: "number",
+    resetVx: "number",
+    resetVy: "number"
 });

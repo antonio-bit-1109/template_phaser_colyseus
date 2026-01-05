@@ -85,6 +85,8 @@ export class UtilsClient {
                 player.x + 10,
                 player.y - 60
             ).setDepth(2)
+            // aggiorno costantemente la lunghezza della vita del player
+            upperBar.width = player.hp;
         }
     }
 
