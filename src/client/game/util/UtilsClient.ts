@@ -2,6 +2,7 @@ import {Scene} from "phaser";
 import TextStyle = Phaser.GameObjects.TextStyle;
 import {PlayerSchema} from "../../../shared/schema/PlayerSchema.ts";
 import Rectangle = Phaser.GameObjects.Rectangle;
+import Sprite = Phaser.GameObjects.Sprite;
 
 
 export class UtilsClient {
@@ -98,5 +99,11 @@ export class UtilsClient {
             10,
             color
         )
+    }
+
+    public deleteBulletFromClient(bulletId: string, bulletsMap: Map<string, Sprite>) {
+        const bull = bulletsMap.get(bulletId)
+        bull?.destroy(true);
+        bulletsMap.delete(bulletId)
     }
 }

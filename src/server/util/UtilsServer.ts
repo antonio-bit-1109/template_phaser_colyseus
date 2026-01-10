@@ -176,7 +176,8 @@ export class UtilsServer {
 
                 } else {
                     // caso in cui object è un istanza di bullet schema
-                    this.CheckPlayerHittedByBullet(player)
+                    this.HandlePlayerHittedByBullet(player)
+                    this.state.bullets.delete(ballObject.id)
                 }
 
 
@@ -210,7 +211,8 @@ export class UtilsServer {
 
                 } else {
                     // caso in cui object è un istanza di bullet schema
-                    this.CheckPlayerHittedByBullet(player)
+                    this.HandlePlayerHittedByBullet(player)
+                    this.state.bullets.delete(ballObject.id)
                 }
             }
 
@@ -218,7 +220,7 @@ export class UtilsServer {
     }
 
     // funzione che sottrae hp al player colpito dal bullet
-    private CheckPlayerHittedByBullet(player: PlayerSchema) {
+    private HandlePlayerHittedByBullet(player: PlayerSchema) {
         if (!player.hitByBullet) {
             console.log("player colpito! in posizione : x -->" + player.x + " y: " + player.y + " hp : " + player.hp)
             player.hp -= 40;

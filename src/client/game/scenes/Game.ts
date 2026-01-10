@@ -302,14 +302,12 @@ export class Game extends Scene {
                         bullet.x > widthCanvas ||
                         bullet.x < 0
                     ) {
-                        const bull = this.bulletsMap.get(bullet.id)
-                        bull?.destroy(true);
-                        this.bulletsMap.delete(bullet.id)
+                        this.utilsClient.deleteBulletFromClient(bullet.id, this.bulletsMap)
                         console.log("bullet fuori dalla canvas : " + bullet.x + " eliminato!")
                     }
 
-
                 })
+
 
             })
 
@@ -365,5 +363,13 @@ export class Game extends Scene {
 
         }
 
+        // se il bullet è cancellato lato server, perche ha colpito un player,
+        // lo cancello anche lato client
+        Array.from(this.bulletsMap.keys()).forEach(bulletId => {
+
+            if (!this.room.state.bullets.has(bulletId)) {
+                this.utilsClient.deleteBulletFromClient(bulletId, this.bulletsMap)
+            }
+        })
     }
 }
