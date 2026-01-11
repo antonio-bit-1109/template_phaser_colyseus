@@ -5,12 +5,14 @@ import Sprite = Phaser.GameObjects.Sprite;
 import {IMessage} from "../../../shared/interface/IMessage.ts";
 import Text = Phaser.GameObjects.Text;
 import {UtilsClient} from "../util/UtilsClient.ts";
+import {AudioManager} from "../util/AudioManager.ts";
 
 export class Game extends Scene {
 
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     private utilsClient: UtilsClient;
+    private audioManager: AudioManager;
     private lastShotTime: number = 0;
     private ball: Phaser.GameObjects.Sprite;
     private readonly players: Map<string, Sprite> = new Map<string, Sprite>();
@@ -55,12 +57,17 @@ export class Game extends Scene {
             // Tentiamo di entrare o creare la stanza 'room' definita nel server
             this.room = await this.client.joinOrCreate<PongState>("pong");
 
+
             console.log("Room State Object:", this.room.state);
 
-            this.utilsClient = new UtilsClient(this)
+            this.utilsClient = new UtilsClient(this);
             // ogni volta che lo stato cambia:
             this.room.onStateChange((pongState: PongState) => {
 
+                // prendo singleton dell audio interrompo la musica della scena precedente e ne faccio partire u altra
+                this.audioManager = AudioManager.getInstance(this);
+                this.audioManager.stopSound("menuMusic");
+                this.audioManager.playSound("gameplayMusic");
 
                 // controllo lo stato del bonus
                 // se non esiste lo creo

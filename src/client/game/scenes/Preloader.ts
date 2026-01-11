@@ -25,16 +25,23 @@ export class Preloader extends Scene {
     }
 
     preload() {
-        // //  Load the assets for the game - Replace with your own assets
-        this.load.setPath('assets');
+        // carico il path a partire dalla cartella public
+        this.load.setPath('public');
 
-        this.load.image("sfondo", "sfondo.png")
-        this.load.image("ball", "pingpongBall.png")
-        this.load.image("player1", "dude_ping_pong.png")
-        this.load.image("player2", "boss_ping_pong.png")
-        this.load.image("bonusGrowUp", "Bonus_1_1.png")
-        this.load.image("malusSlowed", "Bonus_2_1.png")
-        this.load.image("bullet", "bullet_03.png")
+        this.load.image("sfondo", "/assets/sfondo.png")
+        this.load.image("ball", "/assets/pingpongBall.png")
+        this.load.image("player1", "/assets/dude_ping_pong.png")
+        this.load.image("player2", "/assets/boss_ping_pong.png")
+        this.load.image("bonusGrowUp", "/assets/Bonus_1_1.png")
+        this.load.image("malusSlowed", "/assets/Bonus_2_1.png")
+        this.load.image("bullet", "/assets/bullet_03.png")
+        this.load.image("canvasMenu", "/assets/canvasMenu.png")
+        this.load.image("mezzobustoDude", "/assets/mezzoBustoDude.png")
+        this.load.image("mezzobustoBoss", "/assets/boss_silly.png")
+
+        // caricamento suoni-audio
+        this.load.audio("bg_music", "/sounds/bg_music.mp3")
+        this.load.audio("gameplayMusic", "/sounds/bg_groove.mp3")
     }
 
     create() {
