@@ -19,4 +19,11 @@ setscale = 0.5 --- r = 45;
 - da fare:
 - stop musica menu iniziale quando entro enlla scena game
 - inserire musica lounge bar - musica attesa per arrivo secondo giocatore
-- all arrivo del secondo giocatore musica di gioco principale 
+- all arrivo del secondo giocatore musica di gioco principale
+
+aggiunta suoni gioco:
+
+- evento fatto gol (ScalettaSoundSchema)
+- evento player colpito (PlayerSchema)
+- evento powerup preso (PlayerSchema)
+- evento rimbalzo palla (Ball Schema)

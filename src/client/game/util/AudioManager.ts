@@ -3,13 +3,21 @@ import BaseSound = Phaser.Sound.BaseSound;
 
 export class AudioManager {
 
-    private scene: Scene;
+    private readonly scene: Scene;
     private static soundsMap: Map<string, BaseSound> = new Map<string, Phaser.Sound.BaseSound>();
 
     constructor(scene: Scene) {
         this.scene = scene
     }
 
+    public getSound(key: string) {
+        const audio = AudioManager.soundsMap.get(key);
+        if (audio) {
+            return audio;
+        } else {
+            console.info("nessun audio trovato per la chiave passata.")
+        }
+    }
 
     public addSoundToCommonMap(key: string, sound: BaseSound) {
         if (key && sound) {
@@ -24,13 +32,13 @@ export class AudioManager {
     }
 
 
-    public playSound(key: string) {
+    public playSound(key: string, config?: Phaser.Types.Sound.SoundConfig) {
         if (!key) {
             console.error("Chiave di riproduzione del suono non fornita!")
         }
         const audio = AudioManager.soundsMap.get(key);
         if (audio) {
-            audio.play();
+            audio.play(config);
         } else {
             console.info("chiave non prsente nella mappa dei suoni.")
         }
@@ -55,5 +63,5 @@ export class AudioManager {
         }
 
     }
-    
+
 }

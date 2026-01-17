@@ -69,6 +69,36 @@ export class Game extends Scene {
             // ogni volta che lo stato cambia:
             this.room.onStateChange((pongState: PongState) => {
 
+                if (
+                    this.room.state.scalettaSounds?.statusRoom &&
+                    this.room.state.scalettaSounds.statusRoom === "awaiting"
+                ) {
+
+                    if (!this.audioManager.getSound("awaiting")) {
+                        this.audioManager.addSoundToCommonMap("awaiting", this.sound.add("waiting_jazz"));
+                        this.audioManager.playSound("awaiting")
+                    }
+
+                }
+
+                if (
+                    this.room.state.scalettaSounds?.statusRoom &&
+                    this.room.state.scalettaSounds.statusRoom === "full"
+                ) {
+
+                    if (this.audioManager.getSound("awaiting")) {
+                        const audio = this.audioManager.getSound("awaiting");
+                        audio && audio.stop();
+                    }
+
+                    if (!this.audioManager.getSound("full")) {
+                        this.audioManager.addSoundToCommonMap("full", this.sound.add("gameplayMusic"));
+                        this.audioManager.playSound("full", {loop: true})
+                    }
+
+                }
+
+
                 // controllo lo stato del bonus
                 // se non esiste lo creo
                 if (
@@ -334,6 +364,7 @@ export class Game extends Scene {
         if (!this.room || !this.room.state || !this.room.state.players) return;
 
         if (!this.room) return;
+
 
         const message: IMessage = {
             direction: 0

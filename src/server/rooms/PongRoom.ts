@@ -190,6 +190,7 @@ export class PongRoom extends Room<PongState> {
         if (this.state.players.size === 0) {
             this.state.players.set(client.sessionId, new PlayerSchema(1, 50, this.canvasH / 2));
             console.log("player 1 " + client.sessionId + " si è loggato.")
+            //notifico che un player si è loggato e setto musica attesa
         } else {
             this.state.players.set(client.sessionId, new PlayerSchema(2, 960, this.canvasH / 2));
             console.log("player 2 " + client.sessionId + " si è loggato.")
@@ -197,10 +198,13 @@ export class PongRoom extends Room<PongState> {
 
         if (this.state.players.size === 1) {
             this.state.gameState = "Attesa secondo giocatore..."
+            this.state.scalettaSounds.statusRoom = "awaiting";
+
         }
 
         if (this.state.players.size === 2) {
             this.state.gameState = "";
+            this.state.scalettaSounds.statusRoom = "full";
         }
 
         console.log(client.sessionId, "giocatore" + size + " si è unito: " + client.sessionId);

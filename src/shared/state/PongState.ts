@@ -3,6 +3,7 @@ import {BallSchema} from "../schema/BallSchema";
 import {PlayerSchema} from "../schema/PlayerSchema";
 import {BonusSchema} from "../schema/BonusSchema.ts";
 import {BulletSchema} from "../schema/BulletSchema.ts";
+import {ScalettaSoundSchema} from "../schema/ScalettaSoundSchema.ts";
 
 
 // contenitore di tutti gli schema definiti per il gioco pong
@@ -18,6 +19,7 @@ export class PongState extends Schema {
     bullets = new MapSchema<BulletSchema>();
 
     bonus: BonusSchema = new BonusSchema();
+    scalettaSounds: ScalettaSoundSchema = new ScalettaSoundSchema();
 }
 
 defineTypes(PongState, {
@@ -25,5 +27,6 @@ defineTypes(PongState, {
     players: {map: PlayerSchema},
     gameState: "string",
     bonus: BonusSchema || null,
-    bullets: {map: BulletSchema}
+    bullets: {map: BulletSchema},
+    scalettaSounds: ScalettaSoundSchema
 });
