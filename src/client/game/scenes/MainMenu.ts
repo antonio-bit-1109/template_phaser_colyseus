@@ -3,12 +3,14 @@ import DOMElement = Phaser.GameObjects.DOMElement;
 import {UtilsClient} from "../util/UtilsClient.ts";
 import Image = Phaser.GameObjects.Image;
 import {MenuAnimationManager} from "../util/MenuAnimationManager.ts";
+import {AudioManager} from "../util/AudioManager.ts";
 
 
 export class MainMenu extends Scene {
 
     private utilsClient: UtilsClient
     private menuAnimationManager: MenuAnimationManager;
+    private audioManager: AudioManager;
     private name: string | null = null;
     private inputDom: DOMElement | null = null;
     private errorMsg: Phaser.GameObjects.Text;
@@ -25,8 +27,13 @@ export class MainMenu extends Scene {
     create() {
         this.utilsClient = new UtilsClient(this);
         this.menuAnimationManager = new MenuAnimationManager(this)
+        this.audioManager = new AudioManager(this);
         this.canvasW = this.game.config.width as number;
         this.canvasH = this.game.config.height as number;
+
+        // musica menu iniziale
+        this.audioManager.addSoundToCommonMap("bgSound", this.sound.add("bg_music"))
+        this.audioManager.playSound("bgSound");
 
         this.menu = this.add.image(
             this.canvasW / 2,

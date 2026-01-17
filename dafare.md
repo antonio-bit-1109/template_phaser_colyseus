@@ -14,4 +14,9 @@ setscale = 0.5 --- r = 45;
 
 - [] ha senso creare il pong state con la posizione default del bullets X e Y a -1000 , -2000 ??
 
--[] palla subito a velocita giusta poi dopo il primo reset ritorna a velocità lenta 
+-[] palla subito a velocita giusta poi dopo il primo reset ritorna a velocità lenta
+
+- da fare:
+- stop musica menu iniziale quando entro enlla scena game
+- inserire musica lounge bar - musica attesa per arrivo secondo giocatore
+- all arrivo del secondo giocatore musica di gioco principale 

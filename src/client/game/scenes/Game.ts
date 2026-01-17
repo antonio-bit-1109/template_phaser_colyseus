@@ -5,12 +5,14 @@ import Sprite = Phaser.GameObjects.Sprite;
 import {IMessage} from "../../../shared/interface/IMessage.ts";
 import Text = Phaser.GameObjects.Text;
 import {UtilsClient} from "../util/UtilsClient.ts";
+import {AudioManager} from "../util/AudioManager.ts";
 
 
 export class Game extends Scene {
 
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
+    private audioManager: AudioManager;
     private utilsClient: UtilsClient;
     private lastShotTime: number = 0;
     private ball: Phaser.GameObjects.Sprite;
@@ -36,6 +38,10 @@ export class Game extends Scene {
     }
 
     async create() {
+
+        // interruzione musica iniziale
+        this.audioManager = new AudioManager(this);
+        this.audioManager.stopSound("bgSound");
 
         this.camera = this.cameras.main;
 

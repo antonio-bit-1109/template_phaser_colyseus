@@ -3,64 +3,57 @@ import BaseSound = Phaser.Sound.BaseSound;
 
 export class AudioManager {
 
-    // private scene: Scene;
-    // private readonly soundsMap: Map<string, BaseSound> = new Map<string, BaseSound>();
+    private scene: Scene;
+    private static soundsMap: Map<string, BaseSound> = new Map<string, Phaser.Sound.BaseSound>();
+
+    constructor(scene: Scene) {
+        this.scene = scene
+    }
 
 
-    // public static getInstance(scene: Scene): AudioManager {
-    //
-    //     if (!AudioManager.instance) {
-    //         AudioManager.instance = new AudioManager(scene)
-    //         return AudioManager.instance
-    //     } else {
-    //
-    //         if (AudioManager.instance.scene !== scene) {
-    //             AudioManager.instance.scene = scene
-    //             AudioManager.instance.stopAllSounds()
-    //         }
-    //         return AudioManager.instance
-    //     }
-    // }
+    public addSoundToCommonMap(key: string, sound: BaseSound) {
+        if (key && sound) {
+            AudioManager.soundsMap.set(key, sound);
+        }
+        if (!key) {
+            console.error("Chiave mappa non fornita.")
+        }
+        if (!sound) {
+            console.error("Oggetto suono non fornito.")
+        }
+    }
 
-    // private constructor(scene: Scene) {
-    //     this.scene = scene
-    // }
-    //
-    // public addSoundToApplication(key: string, audio: BaseSound) {
-    //     this.soundsMap.set(key, audio);
-    // }
-    //
-    //
-    // public playSound(key: string) {
-    //     const audio = this.getAudio(key)
-    //     if (audio) {
-    //         audio.play()
-    //     } else {
-    //         console.error("L'audio da avviare non risulta essere presente.")
-    //     }
-    // }
 
-    // public stopAllSounds() {
-    //     if (AudioManager.instance?.soundsMap.values()) {
-    //         for (const sound of AudioManager.instance?.soundsMap.values()) {
-    //             if (sound) {
-    //                 sound.stop()
-    //             }
-    //         }
-    //     }
-    //
-    // }
+    public playSound(key: string) {
+        if (!key) {
+            console.error("Chiave di riproduzione del suono non fornita!")
+        }
+        const audio = AudioManager.soundsMap.get(key);
+        if (audio) {
+            audio.play();
+        } else {
+            console.info("chiave non prsente nella mappa dei suoni.")
+        }
+    }
 
-    // public stopSound(key: string) {
-    //     const audio = this.getAudio(key)
-    //     if (audio) {
-    //         audio.stop()
-    //     } else {
-    //         console.error("L'audio da interrompere non risulta essere presente.")
-    //     }
-    // }
-    //
-    // private getAudio(key: string) {
-    //     return this.soundsMap.get(key)
-    // }
+    public stopSound(key: string) {
+        const audio = AudioManager.soundsMap.get(key);
+        if (audio) {
+            audio.stop();
+        }
+    }
+
+    public stopAllSounds() {
+        const sounds = AudioManager.soundsMap.values();
+
+        if (sounds) {
+            for (const sound of sounds) {
+                sound.stop()
+            }
+        } else {
+            console.info("nessun audio presente in mappa da interrompere")
+        }
+
+    }
+    
 }
