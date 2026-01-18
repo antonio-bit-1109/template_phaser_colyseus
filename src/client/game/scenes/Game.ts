@@ -69,6 +69,23 @@ export class Game extends Scene {
             // ogni volta che lo stato cambia:
             this.room.onStateChange((pongState: PongState) => {
 
+                // preparo l'audio incaricato di notificare il suono di gol effettuato
+                if (!this.audioManager.getSound("golSound")) {
+                    this.audioManager.addSoundToCommonMap("golSound", this.sound.add("gol"))
+                }
+
+                // se evento di gol si verifica, il valore di golEvent viene impostato a true
+                if (this.room.state.scalettaSounds.golEvent) {
+
+                    !this.audioManager.isAudioPlaying("golSound") && this.audioManager.playSound("golSound")
+                } else {
+                    this.audioManager.stopSound("golSound")
+                }
+
+                // se cambiano i valori della status room
+                // usati per capire quando cambiare la canzone:
+                // se nella room un solo player : awaiting_music
+                // se nella room entrambi i player, musica di gioco principale
                 if (
                     this.room.state.scalettaSounds?.statusRoom &&
                     this.room.state.scalettaSounds.statusRoom === "awaiting"

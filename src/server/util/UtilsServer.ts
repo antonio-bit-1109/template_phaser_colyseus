@@ -67,7 +67,10 @@ export class UtilsServer {
             // resetto la palla quando tocca uno dei muri di punto
             // aumento punteggio giocatore avversario
             if (isBall) {
-                this.resetBall(object, canvasW / 2, canvasH / 2, raggioBall, object.y)
+                // se il gol è stato effettuato setto il valore a true
+                this.state.scalettaSounds.setGolEvent(true);
+
+                this.resetBall(object, canvasW / 2, canvasH / 2, raggioBall, object.y, this.state)
                 // quando la palla sbatte sul muro di sinistra,
                 // assegno +1 al giocatore opposto, quello con index = 2
                 this.state.players.forEach(player => {
@@ -87,7 +90,11 @@ export class UtilsServer {
         } else if (object.x + raggioBall >= canvasW) {
 
             if (isBall) {
-                this.resetBall(object, canvasW / 2, canvasH / 2, canvasW - raggioBall, object.y)
+
+                // se il gol è stato effettuato setto il valore a true
+                this.state.scalettaSounds.setGolEvent(true);
+
+                this.resetBall(object, canvasW / 2, canvasH / 2, canvasW - raggioBall, object.y, this.state)
                 // quando la palla sbatte sul muro di destra, do punto al giocatore opposto, il primo giocatore creato,
                 // cioè quello con index = 1
                 this.state.players.forEach(player => {
@@ -258,7 +265,8 @@ export class UtilsServer {
         resetPosX: number,
         resetPosY: number,
         xFinalPosition: number,
-        yFinalPosition: number
+        yFinalPosition: number,
+        pongState: PongState
     ) {
 
         if (this.timeoutRef) {
@@ -271,6 +279,12 @@ export class UtilsServer {
         ball.vy = 0;
 
         this.timeoutRef = setTimeout(() => {
+
+            // se il valore di pong state è impostato su true, lo riporto a false dopo 1 sec
+            if (pongState.scalettaSounds.golEvent) {
+                pongState.scalettaSounds.golEvent = false;
+            }
+
             const randomvX = Math.floor(Math.random() * 2);
             const randomvY = Math.floor(Math.random() * 2);
             let newvX = randomvX === 0 ? -ball.resetVx : ball.resetVx
@@ -279,7 +293,7 @@ export class UtilsServer {
             ball.y = resetPosY;
             ball.vx = newvX;
             ball.vy = newVy;
-        }, 1000)
+        }, 2000)
 
     }
 

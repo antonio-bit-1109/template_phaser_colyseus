@@ -19,6 +19,16 @@ export class AudioManager {
         }
     }
 
+    public isAudioPlaying(key: string) {
+        const audio = AudioManager.soundsMap.get(key);
+        if (audio) {
+            return audio.isPlaying
+        } else {
+            console.info("nessun audio trovato per la chiave passata.")
+            return false;
+        }
+    }
+
     public addSoundToCommonMap(key: string, sound: BaseSound) {
         if (key && sound) {
             AudioManager.soundsMap.set(key, sound);
