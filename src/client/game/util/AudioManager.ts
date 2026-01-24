@@ -1,13 +1,11 @@
-import {Scene} from "phaser";
 import BaseSound = Phaser.Sound.BaseSound;
 
 export class AudioManager {
 
-    private readonly scene: Scene;
-    private static soundsMap: Map<string, BaseSound> = new Map<string, Phaser.Sound.BaseSound>();
 
-    constructor(scene: Scene) {
-        this.scene = scene
+    private static readonly soundsMap: Map<string, BaseSound> = new Map<string, Phaser.Sound.BaseSound>();
+
+    constructor() {
     }
 
     public getSound(key: string) {

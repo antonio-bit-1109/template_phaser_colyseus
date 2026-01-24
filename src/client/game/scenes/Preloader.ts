@@ -44,6 +44,7 @@ export class Preloader extends Scene {
         this.load.audio("gameplayMusic", "/sounds/bg_groove.mp3")
         this.load.audio("waiting_jazz", "/sounds/waiting_jazz.mp3")
         this.load.audio("gol", "/sounds/crowd_gool.mp3")
+        this.load.audio("boing", "/sounds/boing0.mp3")
     }
 
     create() {

@@ -27,7 +27,7 @@ export class MainMenu extends Scene {
     create() {
         this.utilsClient = new UtilsClient(this);
         this.menuAnimationManager = new MenuAnimationManager(this)
-        this.audioManager = new AudioManager(this);
+        this.audioManager = new AudioManager();
         this.canvasW = this.game.config.width as number;
         this.canvasH = this.game.config.height as number;
 

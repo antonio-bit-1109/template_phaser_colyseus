@@ -40,7 +40,7 @@ export class Game extends Scene {
     async create() {
 
         // interruzione musica iniziale
-        this.audioManager = new AudioManager(this);
+        this.audioManager = new AudioManager();
         this.audioManager.stopSound("bgSound");
 
         this.camera = this.cameras.main;
@@ -77,7 +77,7 @@ export class Game extends Scene {
                 // se evento di gol si verifica, il valore di golEvent viene impostato a true
                 if (this.room.state.scalettaSounds.golEvent) {
 
-                    !this.audioManager.isAudioPlaying("golSound") && this.audioManager.playSound("golSound")
+                    !this.audioManager.isAudioPlaying("golSound") && this.audioManager.playSound("golSound", {volume: 1})
                 } else {
                     this.audioManager.stopSound("golSound")
                 }
