@@ -1,10 +1,10 @@
-import {BallSchema} from "../../shared/schema/BallSchema.ts";
-import {PlayerSchema} from "../../shared/schema/PlayerSchema.ts";
-import {PongState} from "../../shared/state/PongState.ts";
+import {BallSchema} from "../../shared/schema/BallSchema";
+import {PlayerSchema} from "../../shared/schema/PlayerSchema";
+import {PongState} from "../../shared/state/PongState";
 import {Schema} from "@colyseus/schema";
-import {BonusSchema} from "../../shared/schema/BonusSchema.ts";
+import {BonusSchema} from "../../shared/schema/BonusSchema";
 import {Clock} from "colyseus";
-import {BulletSchema} from "../../shared/schema/BulletSchema.ts";
+import {BulletSchema} from "../../shared/schema/BulletSchema";
 
 export class UtilsServer {
 

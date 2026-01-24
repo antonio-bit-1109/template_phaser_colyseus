@@ -1,25 +1,22 @@
-import { defineConfig } from 'vite';
-
-const phasermsg = () => {
-    return {
-        name: 'phasermsg',
-        buildStart() {
-            process.stdout.write(`Building for production...\n`);
-        },
-        buildEnd() {
-            const line = "---------------------------------------------------------";
-            const msg = `❤️❤️❤️ Tell us about your game! - games@phaser.io ❤️❤️❤️`;
-            process.stdout.write(`${line}\n${msg}\n${line}\n`);
-            
-            process.stdout.write(`✨ Done ✨\n`);
-        }
-    }
-}   
+import {defineConfig} from 'vite';
 
 export default defineConfig({
     base: './',
     logLevel: 'warning',
+    esbuild: {
+        keepNames: true,
+        tsconfigRaw: {
+            compilerOptions: {
+                experimentalDecorators: true,
+                useDefineForClassFields: false
+            }
+        }
+    },
     build: {
+        // --- MODIFICA QUI ---
+        outDir: '../dist/client', // Mette i file compilati in dist/client
+        emptyOutDir: true,        // Pulisce la cartella prima di scrivere
+        // --------------------
         rollupOptions: {
             output: {
                 manualChunks: {
@@ -29,19 +26,10 @@ export default defineConfig({
         },
         minify: 'terser',
         terserOptions: {
-            compress: {
-                passes: 2
-            },
+            compress: {passes: 2},
             mangle: true,
-            format: {
-                comments: false
-            }
+            format: {comments: false}
         }
     },
-    server: {
-        port: 8080
-    },
-    plugins: [
-        phasermsg()
-    ]
+    // Rimuovi la config server qui, in build non serve
 });

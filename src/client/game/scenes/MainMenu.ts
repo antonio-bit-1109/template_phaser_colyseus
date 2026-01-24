@@ -1,9 +1,9 @@
 import {Scene} from 'phaser';
 import DOMElement = Phaser.GameObjects.DOMElement;
-import {UtilsClient} from "../util/UtilsClient.ts";
+import {UtilsClient} from "../util/UtilsClient";
 import Image = Phaser.GameObjects.Image;
-import {MenuAnimationManager} from "../util/MenuAnimationManager.ts";
-import {AudioManager} from "../util/AudioManager.ts";
+import {MenuAnimationManager} from "../util/MenuAnimationManager";
+import {AudioManager} from "../util/AudioManager";
 
 
 export class MainMenu extends Scene {

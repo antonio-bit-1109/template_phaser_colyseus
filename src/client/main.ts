@@ -1,4 +1,4 @@
-import StartGame from '../client/game/main.ts';
+import StartGame from '../client/game/main';
 
 document.addEventListener('DOMContentLoaded', () => {
 

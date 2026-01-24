@@ -2,10 +2,10 @@ import {Scene} from 'phaser';
 import * as Colyseus from "colyseus.js";
 import {PongState} from "../../../shared/state/PongState";
 import Sprite = Phaser.GameObjects.Sprite;
-import {IMessage} from "../../../shared/interface/IMessage.ts";
+import {IMessage} from "../../../shared/interface/IMessage";
 import Text = Phaser.GameObjects.Text;
-import {UtilsClient} from "../util/UtilsClient.ts";
-import {AudioManager} from "../util/AudioManager.ts";
+import {UtilsClient} from "../util/UtilsClient";
+import {AudioManager} from "../util/AudioManager";
 
 
 export class Game extends Scene {

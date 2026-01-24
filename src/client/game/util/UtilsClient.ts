@@ -1,6 +1,6 @@
 import {Scene} from "phaser";
 import TextStyle = Phaser.GameObjects.TextStyle;
-import {PlayerSchema} from "../../../shared/schema/PlayerSchema.ts";
+import {PlayerSchema} from "../../../shared/schema/PlayerSchema";
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Sprite = Phaser.GameObjects.Sprite;
 

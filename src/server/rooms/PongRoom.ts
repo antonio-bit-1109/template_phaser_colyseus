@@ -2,11 +2,11 @@ import {Room, Client} from "colyseus";
 import {PongState} from "../../shared/state/PongState";
 import {PlayerSchema} from "../../shared/schema/PlayerSchema";
 import {BallSchema} from "../../shared/schema/BallSchema";
-import {UtilsServer} from "../util/UtilsServer.ts";
-import {IMessage} from "../../shared/interface/IMessage.ts";
-import {BonusSchema} from "../../shared/schema/BonusSchema.ts";
-import {IBonusTypes} from "../../shared/interface/IBonusTypes.ts";
-import {BulletSchema} from "../../shared/schema/BulletSchema.ts";
+import {UtilsServer} from "../util/UtilsServer";
+import {IMessage} from "../../shared/interface/IMessage";
+import {BonusSchema} from "../../shared/schema/BonusSchema";
+import {IBonusTypes} from "../../shared/interface/IBonusTypes";
+import {BulletSchema} from "../../shared/schema/BulletSchema";
 
 // contiene la logica di connessione e le interazioni per una determinata room 'universo di gioco'
 // in questo caso qui sarà contenuta tutta la logica di connessione alla stanza che gestisce una partita di pong

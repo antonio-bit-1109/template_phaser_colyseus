@@ -1,9 +1,9 @@
 import {defineTypes, MapSchema, Schema} from "@colyseus/schema";
 import {BallSchema} from "../schema/BallSchema";
 import {PlayerSchema} from "../schema/PlayerSchema";
-import {BonusSchema} from "../schema/BonusSchema.ts";
-import {BulletSchema} from "../schema/BulletSchema.ts";
-import {ScalettaSoundSchema} from "../schema/ScalettaSoundSchema.ts";
+import {BonusSchema} from "../schema/BonusSchema";
+import {BulletSchema} from "../schema/BulletSchema";
+import {ScalettaSoundSchema} from "../schema/ScalettaSoundSchema";
 
 
 // contenitore di tutti gli schema definiti per il gioco pong
