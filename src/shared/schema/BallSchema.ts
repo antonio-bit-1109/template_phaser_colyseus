@@ -8,6 +8,9 @@ export class BallSchema extends Schema {
     r: number = 22;
     resetVx = 8;
     resetVy = 8;
+    kappa = 1;
+    b = 4;
+    c = "star";
 
     constructor(ballX: number = 500, ballY: number = 500) {
         super();
