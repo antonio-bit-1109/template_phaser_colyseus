@@ -26,7 +26,11 @@ export class Preloader extends Scene {
 
     preload() {
         // carico il path a partire dalla cartella public
-        this.load.setPath('public');
+        if (import.meta.env.PRODUCTION_SERVER_URL === null) {
+            this.load.setPath('public');
+        } else {
+            this.load.setPath('');
+        }
 
         this.load.image("sfondo", "/assets/sfondo.png")
         this.load.image("ball", "/assets/pingpongBall.png")

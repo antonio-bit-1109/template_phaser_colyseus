@@ -26,7 +26,7 @@ const config: Phaser.Types.Core.GameConfig = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true
+            debug: import.meta.env.PRODUCTION_SERVER_URL as string === null
         }
     },
 };

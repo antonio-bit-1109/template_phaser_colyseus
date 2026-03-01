@@ -56,7 +56,10 @@ export class Game extends Scene {
 
         // --- LOGICA DI CONNESSIONE ---
         // Istanziamo il client collegandolo a localhost:2567
-        this.client = new Colyseus.Client("ws://localhost:2567");
+        const serverUrl = import.meta.env.PRODUCTION_SERVER_URL as string ?? import.meta.env.DEV_SERVER_URL as string;
+        this.client = new Colyseus.Client(serverUrl);
+
+        console.log("url server di deploy: --->" + serverUrl)
 
         try {
             // Tentiamo di entrare o creare la stanza 'room' definita nel server
